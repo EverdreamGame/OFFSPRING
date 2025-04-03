@@ -27,13 +27,10 @@ public class Rope3D : MonoBehaviour
     private LineRenderer lineRenderer;
     private List<RopeNode> nodes = new List<RopeNode>();
     private List<float> nodeSpeeds = new List<float>();
-    private float actualRopeLength;
-    private float maxRopeLength;
+    private float ropeLength;
 
-    public float CurrentLength => actualRopeLength;
-    public float MaxLength => maxRopeLength;
+    public float CurrentLength => CalculateActualRopeLength(); // Now calculates real path length
     public float RestLength => (totalNodes - 1) * nodeDistance;
-    public float StretchRatio => actualRopeLength / maxRopeLength;
     public Vector3 StartPoint => startAttachment != null ? startAttachment.position : nodes[0].Position;
     public Vector3 EndPoint => endAttachment != null ? endAttachment.position : nodes[nodes.Count - 1].Position;
 
@@ -41,6 +38,7 @@ public class Rope3D : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
         InitializeRope();
+        ropeLength = RestLength;
     }
 
     void Update() => DrawRope();
@@ -49,53 +47,51 @@ public class Rope3D : MonoBehaviour
     {
         float dt = Time.fixedDeltaTime;
 
-        Vector3 startPos = StartPoint;
-        Vector3 endPos = EndPoint;
+        // Calculate actual rope length along all segments
+        float currentActualLength = CalculateActualRopeLength();
 
-        CalculateRopeLength();
-
-        if (actualRopeLength > maxRopeLength)
+        // Enforce fixed length between attachments
+        if (startAttachment != null && endAttachment != null && currentActualLength > ropeLength)
         {
-            float excessRatio = actualRopeLength / maxRopeLength;
-            float compressionFactor = 1f / excessRatio;
+            // Calculate the direction from each attachment to the next node
+            Vector3 startToNext = nodes[1].Position - startAttachment.position;
+            Vector3 endToPrev = nodes[nodes.Count - 2].Position - endAttachment.position;
 
-            // Calculate the natural path direction from attachments through nodes
-            Vector3 startPullDirection = (nodes[1].Position - startPos).normalized;
-            Vector3 endPullDirection = (nodes[nodes.Count - 2].Position - endPos).normalized;
-
-            // Apply pull to movable attachments
-            if (startAttachment != null)
+            // Only apply correction if we have valid directions (avoid division by zero)
+            if (startToNext.sqrMagnitude > 0.001f && endToPrev.sqrMagnitude > 0.001f)
             {
-                Rigidbody rb = startAttachment.GetComponent<Rigidbody>();
-                if (rb == null || !rb.isKinematic)
+                Vector3 startDirection = startToNext.normalized;
+                Vector3 endDirection = endToPrev.normalized;
+
+                float distanceToCorrect = currentActualLength - ropeLength;
+
+                // Calculate correction amounts (distribute between both ends)
+                float startCorrection = distanceToCorrect * 0.5f;
+                float endCorrection = distanceToCorrect * 0.5f;
+
+                // Calculate new positions
+                Vector3 newStartPos = startAttachment.position + startDirection * startCorrection;
+                Vector3 newEndPos = endAttachment.position + endDirection * endCorrection;
+
+                // Verify the new positions don't overshoot the nodes
+                if (Vector3.Dot(newStartPos - nodes[1].Position, startDirection) > 0)
+                    newStartPos = nodes[1].Position - startDirection * 0.01f;
+
+                if (Vector3.Dot(newEndPos - nodes[nodes.Count - 2].Position, endDirection) > 0)
+                    newEndPos = nodes[nodes.Count - 2].Position - endDirection * 0.01f;
+
+                // Move attachments if they're not kinematic
+                Rigidbody startRb = startAttachment.GetComponent<Rigidbody>();
+                if (startRb == null || !startRb.isKinematic)
                 {
-                    startAttachment.position += startPullDirection * (actualRopeLength - maxRopeLength) * dt;
+                    startAttachment.position = newStartPos;
                 }
-            }
-            else
-            {
-                nodes[0].Position += startPullDirection * (actualRopeLength - maxRopeLength) * dt;
-            }
 
-            if (endAttachment != null)
-            {
-                Rigidbody rb = endAttachment.GetComponent<Rigidbody>();
-                if (rb == null || !rb.isKinematic)
+                Rigidbody endRb = endAttachment.GetComponent<Rigidbody>();
+                if (endRb == null || !endRb.isKinematic)
                 {
-                    endAttachment.position += endPullDirection * (actualRopeLength - maxRopeLength) * dt;
+                    endAttachment.position = newEndPos;
                 }
-            }
-            else
-            {
-                nodes[nodes.Count - 1].Position += endPullDirection * (actualRopeLength - maxRopeLength) * dt;
-            }
-
-            // Compress all segments toward the center while preserving shape
-            Vector3 centerPoint = (startPos + endPos) * 0.5f;
-            for (int i = 1; i < nodes.Count - 1; i++)
-            {
-                Vector3 toCenter = centerPoint - nodes[i].Position;
-                nodes[i].Position += toCenter * (1 - compressionFactor) * 0.5f;
             }
         }
 
@@ -132,8 +128,6 @@ public class Rope3D : MonoBehaviour
             nodes[nodes.Count - 1].Position = endAttachment.position;
             nodes[nodes.Count - 1].previousPosition = endAttachment.position;
         }
-
-        CalculateRopeLength();
     }
 
     private void InitializeRope()
@@ -157,17 +151,19 @@ public class Rope3D : MonoBehaviour
             spawnPos.y -= nodeDistance;
         }
 
-        maxRopeLength = RestLength;
         lineRenderer.positionCount = totalNodes;
         lineRenderer.startWidth = ropeWidth;
         lineRenderer.endWidth = ropeWidth;
     }
-
-    private void CalculateRopeLength()
+    
+    private float CalculateActualRopeLength()
     {
-        actualRopeLength = 0f;
+        float length = 0f;
         for (int i = 0; i < nodes.Count - 1; i++)
-            actualRopeLength += Vector3.Distance(nodes[i].Position, nodes[i + 1].Position);
+        {
+            length += Vector3.Distance(nodes[i].Position, nodes[i + 1].Position);
+        }
+        return length;
     }
 
     private void CalculateVelocities()
