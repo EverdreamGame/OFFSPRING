@@ -156,7 +156,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     _lookInputVector = _moveInputVector;
 
                     //Debug.Log("Input: " + _moveInputVector);
-                    //Debug.Log("Look: " + _lookInputVector);
+                    Debug.Log("Look: " + _lookInputVector);
                     break;
                 }
         }
@@ -227,11 +227,18 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                         // Smoothly interpolate from current to target look direction
                         Vector3 smoothedLookInputDirection = Vector3.Slerp(Motor.CharacterForward, _lookInputVector, 1 - Mathf.Exp(-OrientationSharpness * deltaTime)).normalized;
 
-                        float lookAngle = Vector3.Angle(_lookInputVector, Vector3.zero);
-                        Debug.Log(lookAngle);
-                        
-                        currentRotation = Quaternion.LookRotation(_lookInputVector, Motor.CharacterUp);
-                        currentRotation.Normalize();
+                        Quaternion rawRotation = Quaternion.LookRotation(smoothedLookInputDirection, Motor.CharacterUp);
+                        Vector3 eulerAngles = rawRotation.eulerAngles;
+
+                        // Ajustar euler angles para que el personaje no quede boca abajo
+                        eulerAngles.z = 0;
+                        if (eulerAngles.x > 90 && eulerAngles.x < 270)
+                        {
+                            eulerAngles.y += 180;
+                            eulerAngles.x = 180 - eulerAngles.x;
+                        }
+
+                        currentRotation = Quaternion.Euler(eulerAngles);
                     }
                     break;
                 }
