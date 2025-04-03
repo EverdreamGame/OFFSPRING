@@ -2,6 +2,11 @@
 
 public class RopeNode : MonoBehaviour
 {
-    public Vector3 PreviousPosition;
-    internal Vector3 previousPosition;
+    [HideInInspector] public Vector3 previousPosition;
+
+    public Vector3 Position
+    {
+        get => transform.position;
+        set => transform.position = value;
+    }
 }

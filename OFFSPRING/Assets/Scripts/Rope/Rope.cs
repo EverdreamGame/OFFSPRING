@@ -1,33 +1,41 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class FinalRope3D : MonoBehaviour
+public class Rope3D : MonoBehaviour
 {
     [Header("Rope Settings")]
     [SerializeField] private GameObject nodePrefab;
     [SerializeField] private float nodeDistance = 0.25f;
-    [SerializeField] private int totalNodes = 20; // Reduced for better performance
+    [SerializeField] private int totalNodes = 20;
     [SerializeField] private float ropeWidth = 0.1f;
+
+    [Header("Attachment Points")]
+    [SerializeField] private Transform startAttachment;
+    [SerializeField] private Transform endAttachment;
 
     [Header("Physics Settings")]
     [SerializeField] private Vector3 gravity = new Vector3(0, -9.8f, 0);
-    [SerializeField] [Range(0.95f, 0.999f)] private float damping = 0.998f; // Higher damping
-    [SerializeField] [Range(0.1f, 1f)] private float stiffness = 0.7f; // Increased stiffness
-    [SerializeField] private float sleepThreshold = 0.001f; // New parameter
+    [SerializeField] [Range(0.95f, 0.999f)] private float damping = 0.998f;
+    [SerializeField] private float sleepThreshold = 0.001f;
 
     [Header("Collision Settings")]
     [SerializeField] private LayerMask collisionMask = ~0;
     [SerializeField] private float collisionRadius = 0.22f;
     [SerializeField] private float skinWidth = 0.02f;
-    [SerializeField] private float friction = 0.2f;
-    [SerializeField] private int solverIterations = 3; // Reduced iterations
+    [SerializeField] private int solverIterations = 3;
 
     private LineRenderer lineRenderer;
     private List<RopeNode> nodes = new List<RopeNode>();
-    private Vector3 mouseLockPosition;
-    private Collider[] overlapResults = new Collider[5];
-    private List<Collider> currentCollisions = new List<Collider>();
     private List<float> nodeSpeeds = new List<float>();
+    private float actualRopeLength;
+    private float maxRopeLength;
+
+    public float CurrentLength => actualRopeLength;
+    public float MaxLength => maxRopeLength;
+    public float RestLength => (totalNodes - 1) * nodeDistance;
+    public float StretchRatio => actualRopeLength / maxRopeLength;
+    public Vector3 StartPoint => startAttachment != null ? startAttachment.position : nodes[0].Position;
+    public Vector3 EndPoint => endAttachment != null ? endAttachment.position : nodes[nodes.Count - 1].Position;
 
     void Awake()
     {
@@ -35,27 +43,71 @@ public class FinalRope3D : MonoBehaviour
         InitializeRope();
     }
 
-    void Update()
-    {
-        if (Camera.main != null)
-        {
-            mouseLockPosition = Camera.main.ScreenToWorldPoint(
-                new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f));
-        }
-        DrawRope();
-    }
+    void Update() => DrawRope();
 
     void FixedUpdate()
     {
         float dt = Time.fixedDeltaTime;
 
-        // Calculate node velocities first
+        Vector3 startPos = StartPoint;
+        Vector3 endPos = EndPoint;
+
+        CalculateRopeLength();
+
+        if (actualRopeLength > maxRopeLength)
+        {
+            float excessRatio = actualRopeLength / maxRopeLength;
+            float compressionFactor = 1f / excessRatio;
+
+            // Calculate the natural path direction from attachments through nodes
+            Vector3 startPullDirection = (nodes[1].Position - startPos).normalized;
+            Vector3 endPullDirection = (nodes[nodes.Count - 2].Position - endPos).normalized;
+
+            // Apply pull to movable attachments
+            if (startAttachment != null)
+            {
+                Rigidbody rb = startAttachment.GetComponent<Rigidbody>();
+                if (rb == null || !rb.isKinematic)
+                {
+                    startAttachment.position += startPullDirection * (actualRopeLength - maxRopeLength) * dt;
+                }
+            }
+            else
+            {
+                nodes[0].Position += startPullDirection * (actualRopeLength - maxRopeLength) * dt;
+            }
+
+            if (endAttachment != null)
+            {
+                Rigidbody rb = endAttachment.GetComponent<Rigidbody>();
+                if (rb == null || !rb.isKinematic)
+                {
+                    endAttachment.position += endPullDirection * (actualRopeLength - maxRopeLength) * dt;
+                }
+            }
+            else
+            {
+                nodes[nodes.Count - 1].Position += endPullDirection * (actualRopeLength - maxRopeLength) * dt;
+            }
+
+            // Compress all segments toward the center while preserving shape
+            Vector3 centerPoint = (startPos + endPos) * 0.5f;
+            for (int i = 1; i < nodes.Count - 1; i++)
+            {
+                Vector3 toCenter = centerPoint - nodes[i].Position;
+                nodes[i].Position += toCenter * (1 - compressionFactor) * 0.5f;
+            }
+        }
+
         CalculateVelocities();
 
-        // Apply forces only to active nodes
-        for (int i = 1; i < nodes.Count; i++)
+        // Apply physics to free nodes
+        for (int i = 0; i < nodes.Count; i++)
         {
-            if (nodeSpeeds[i] > sleepThreshold)
+            bool isStartNode = i == 0 && startAttachment != null;
+            bool isEndNode = i == nodes.Count - 1 && endAttachment != null;
+
+            if (!isStartNode && !isEndNode && nodeSpeeds[i] > sleepThreshold)
             {
                 VerletIntegration(nodes[i], dt);
             }
@@ -66,50 +118,69 @@ public class FinalRope3D : MonoBehaviour
         {
             ApplyDistanceConstraints();
             HandleCollisions();
-            ApplyPositionSmoothing(); // New smoothing pass
         }
 
-        // Lock first node to mouse
-        if (mouseLockPosition != Vector3.zero)
+        // Update attachment points
+        if (startAttachment != null)
         {
-            nodes[0].transform.position = mouseLockPosition;
-            nodes[0].previousPosition = mouseLockPosition;
+            nodes[0].Position = startAttachment.position;
+            nodes[0].previousPosition = startAttachment.position;
         }
+
+        if (endAttachment != null)
+        {
+            nodes[nodes.Count - 1].Position = endAttachment.position;
+            nodes[nodes.Count - 1].previousPosition = endAttachment.position;
+        }
+
+        CalculateRopeLength();
     }
 
     private void InitializeRope()
     {
-        Vector3 startPos = transform.position;
+        // Clear existing nodes
+        foreach (Transform child in transform)
+            Destroy(child.gameObject);
 
+        nodes.Clear();
+        nodeSpeeds.Clear();
+
+        // Create new nodes
+        Vector3 spawnPos = transform.position;
         for (int i = 0; i < totalNodes; i++)
         {
             RopeNode node = Instantiate(nodePrefab, transform).GetComponent<RopeNode>();
-            node.transform.position = startPos;
-            node.previousPosition = startPos;
+            node.Position = spawnPos;
+            node.previousPosition = spawnPos;
             nodes.Add(node);
             nodeSpeeds.Add(0f);
-            startPos.y -= nodeDistance;
+            spawnPos.y -= nodeDistance;
         }
 
+        maxRopeLength = RestLength;
         lineRenderer.positionCount = totalNodes;
         lineRenderer.startWidth = ropeWidth;
         lineRenderer.endWidth = ropeWidth;
     }
 
+    private void CalculateRopeLength()
+    {
+        actualRopeLength = 0f;
+        for (int i = 0; i < nodes.Count - 1; i++)
+            actualRopeLength += Vector3.Distance(nodes[i].Position, nodes[i + 1].Position);
+    }
+
     private void CalculateVelocities()
     {
         for (int i = 0; i < nodes.Count; i++)
-        {
-            nodeSpeeds[i] = (nodes[i].transform.position - nodes[i].previousPosition).sqrMagnitude;
-        }
+            nodeSpeeds[i] = (nodes[i].Position - nodes[i].previousPosition).sqrMagnitude;
     }
 
     private void VerletIntegration(RopeNode node, float dt)
     {
-        Vector3 temp = node.transform.position;
+        Vector3 temp = node.Position;
         Vector3 velocity = (temp - node.previousPosition) * damping;
-
-        node.transform.position += velocity + gravity * (dt * dt);
+        node.Position += velocity + gravity * (dt * dt);
         node.previousPosition = temp;
     }
 
@@ -117,15 +188,11 @@ public class FinalRope3D : MonoBehaviour
     {
         // Forward pass
         for (int i = 0; i < nodes.Count - 1; i++)
-        {
             ApplyNodeConstraint(i, i + 1);
-        }
 
         // Backward pass for stability
         for (int i = nodes.Count - 2; i >= 0; i--)
-        {
             ApplyNodeConstraint(i, i + 1);
-        }
     }
 
     private void ApplyNodeConstraint(int indexA, int indexB)
@@ -133,53 +200,53 @@ public class FinalRope3D : MonoBehaviour
         RopeNode nodeA = nodes[indexA];
         RopeNode nodeB = nodes[indexB];
 
-        Vector3 delta = nodeB.transform.position - nodeA.transform.position;
+        Vector3 delta = nodeB.Position - nodeA.Position;
         float distance = delta.magnitude;
-        float correction = (distance - nodeDistance) * stiffness;
+        float correction = (distance - nodeDistance) * 0.5f;
 
         if (distance > 0.0001f)
         {
             Vector3 correctionVector = (delta / distance) * correction;
 
-            if (indexA != 0 || mouseLockPosition == Vector3.zero)
-            {
-                nodeA.transform.position += correctionVector * 0.5f;
-            }
-            nodeB.transform.position -= correctionVector * 0.5f;
+            bool canMoveA = indexA != 0 || startAttachment == null;
+            bool canMoveB = indexB != nodes.Count - 1 || endAttachment == null;
+
+            if (canMoveA) nodeA.Position += correctionVector;
+            if (canMoveB) nodeB.Position -= correctionVector;
         }
     }
 
     private void HandleCollisions()
     {
-        currentCollisions.Clear();
-
-        for (int i = 1; i < nodes.Count; i++)
+        for (int i = 0; i < nodes.Count; i++)
         {
-            if (nodeSpeeds[i] < sleepThreshold) continue;
+            // Skip attached nodes
+            bool isStartNode = i == 0 && startAttachment != null;
+            bool isEndNode = i == nodes.Count - 1 && endAttachment != null;
+            if (isStartNode || isEndNode || nodeSpeeds[i] < sleepThreshold)
+                continue;
 
             RopeNode node = nodes[i];
-            Vector3 position = node.transform.position;
-
-            // Node collision
-            int hits = Physics.OverlapSphereNonAlloc(
-                position,
+            Collider[] hits = new Collider[5];
+            int numHits = Physics.OverlapSphereNonAlloc(
+                node.Position,
                 collisionRadius + skinWidth,
-                overlapResults,
-                collisionMask);
+                hits,
+                collisionMask
+            );
 
-            if (hits > 0)
+            if (numHits > 0)
             {
                 Vector3 pushDirection = Vector3.zero;
                 int validHits = 0;
 
-                for (int j = 0; j < hits; j++)
+                for (int j = 0; j < numHits; j++)
                 {
-                    if (overlapResults[j].transform != node.transform)
+                    if (hits[j].transform != node.transform)
                     {
-                        currentCollisions.Add(overlapResults[j]);
-                        Vector3 closestPoint = overlapResults[j].ClosestPoint(position);
-                        Vector3 normal = (position - closestPoint).normalized;
-                        float distance = Vector3.Distance(position, closestPoint);
+                        Vector3 closestPoint = hits[j].ClosestPoint(node.Position);
+                        Vector3 normal = (node.Position - closestPoint).normalized;
+                        float distance = Vector3.Distance(node.Position, closestPoint);
 
                         if (distance < collisionRadius + skinWidth)
                         {
@@ -191,34 +258,22 @@ public class FinalRope3D : MonoBehaviour
 
                 if (validHits > 0)
                 {
-                    node.transform.position += pushDirection / validHits;
-                    node.previousPosition = node.transform.position;
+                    node.Position += pushDirection / validHits;
+                    node.previousPosition = node.Position;
                 }
             }
-        }
-    }
-
-    private void ApplyPositionSmoothing()
-    {
-        // Average positions with neighbors to reduce jitter
-        for (int i = 1; i < nodes.Count - 1; i++)
-        {
-            Vector3 prevPos = nodes[i - 1].transform.position;
-            Vector3 nextPos = nodes[i + 1].transform.position;
-            Vector3 smoothedPos = (prevPos + nextPos) * 0.5f;
-
-            nodes[i].transform.position = Vector3.Lerp(
-                nodes[i].transform.position,
-                smoothedPos,
-                0.3f); // Smoothing factor
         }
     }
 
     private void DrawRope()
     {
         for (int i = 0; i < nodes.Count; i++)
-        {
-            lineRenderer.SetPosition(i, nodes[i].transform.position);
-        }
+            lineRenderer.SetPosition(i, nodes[i].Position);
+    }
+
+    public void SetAttachments(Transform start, Transform end)
+    {
+        startAttachment = start;
+        endAttachment = end;
     }
 }
