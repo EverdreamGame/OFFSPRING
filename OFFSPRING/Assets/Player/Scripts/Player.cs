@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
 {
     public PlayerInputDevice CurrentInputDevice;
 
-    public CharacterController CharacterController;
+    public KCharacterController CharacterController;
     public CharacterCamera CameraController;
 
     public Transform CameraLookAtTransform;

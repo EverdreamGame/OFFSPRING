@@ -81,8 +81,11 @@ public class CharacterCamera : MonoBehaviour
 
     public void UpdateWithInput(float deltaTime, Vector3 lookDirection)
     {
-        HandleObstructions(deltaTime);
-        UpdatePositionAndRotation(deltaTime, lookDirection);
+        //HandleObstructions(deltaTime);
+        //UpdatePositionAndRotation(deltaTime, lookDirection);
+
+        _currentFollowPosition = Vector3.Lerp(_currentFollowPosition, LookAtTransform.position, 1f - Mathf.Exp(-FollowingSharpness * deltaTime));
+        transform.position = _currentFollowPosition + (Vector3.right * DefaultDistance);
     }
 
     void UpdatePositionAndRotation(float deltaTime, Vector3 rotationInput)

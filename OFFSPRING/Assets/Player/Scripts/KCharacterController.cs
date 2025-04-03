@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public enum CharacterState
 {
-    Default
+    Default,
+    Swimming
 }
 
 public enum OrientationMethod
@@ -21,7 +22,7 @@ public enum BonusOrientationMethod
     TowardsGroundSlopeAndGravity,
 }
 
-public class CharacterController : MonoBehaviour, ICharacterController
+public class KCharacterController : MonoBehaviour, ICharacterController
 {
     public KinematicCharacterMotor Motor;
 
@@ -38,7 +39,12 @@ public class CharacterController : MonoBehaviour, ICharacterController
     [Header("Air Movement")]
     public float MaxAirMoveSpeed = 15f;
     public float AirAccelerationSpeed = 15f;
-    public float Drag = 0.1f;
+    public float AirDrag = 0.1f;
+
+    [Header("Underwater Movement")]
+    public float MaxUnderwaterSpeed = 15f;
+    public float UnderwaterAccelerationSpeed = 15f;
+    public float UnderwaterDrag = 1f;
 
     [Header("Misc")]
     public List<Collider> IgnoredColliders = new List<Collider>();
@@ -57,7 +63,7 @@ public class CharacterController : MonoBehaviour, ICharacterController
     void Awake()
     {
         // Handle initial state
-        TransitionToState(CharacterState.Default);
+        //TransitionToState(CharacterState.Default);
 
         // Assign the characterController to the motor
         Motor.CharacterController = this;
@@ -79,6 +85,10 @@ public class CharacterController : MonoBehaviour, ICharacterController
                 {
                     break;
                 }
+            case CharacterState.Swimming:
+                {
+                    break;
+                }
         }
     }
     public void OnStateExit(CharacterState state, CharacterState toState)
@@ -89,14 +99,27 @@ public class CharacterController : MonoBehaviour, ICharacterController
                 {
                     break;
                 }
+            case CharacterState.Swimming:
+                {
+                    break;
+                }
         }
     }
 
     // ========================================== INPUTS ==========================================
     public void SetInputs(ref PlayerCharacterInputs inputs)
     {
+        Vector3 moveInputVector;
+
         // Clamp input
-        Vector3 moveInputVector = Vector3.ClampMagnitude(new Vector3(inputs.walkInput.x, 0f, inputs.walkInput.y), 1f);
+        if (CurrentCharacterState == CharacterState.Swimming)
+        {
+            moveInputVector = Vector3.ClampMagnitude(new Vector3(0, inputs.walkInput.y, inputs.walkInput.x), 1f);
+        }
+        else
+        {
+            moveInputVector = Vector3.ClampMagnitude(new Vector3(inputs.walkInput.x, 0, inputs.walkInput.y), 1f);
+        }
 
         // Calculate camera direction and rotation on the character plane
         Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(inputs.cameraRotation * Vector3.forward, Motor.CharacterUp).normalized;
@@ -125,6 +148,15 @@ public class CharacterController : MonoBehaviour, ICharacterController
                             _lookInputVector = cameraPlanarRotation * new Vector3(inputs.lookInput.x, 0f, inputs.lookInput.y);
                             break;
                     }
+                    break;
+                }
+            case CharacterState.Swimming:
+                {
+                    _moveInputVector = moveInputVector;
+                    _lookInputVector = _moveInputVector;
+
+                    //Debug.Log("Input: " + _moveInputVector);
+                    //Debug.Log("Look: " + _lookInputVector);
                     break;
                 }
         }
@@ -188,6 +220,21 @@ public class CharacterController : MonoBehaviour, ICharacterController
                     }
                     break;
                 }
+            case CharacterState.Swimming:
+                {
+                    if (_lookInputVector.sqrMagnitude > 0f && OrientationSharpness > 0f)
+                    {
+                        // Smoothly interpolate from current to target look direction
+                        Vector3 smoothedLookInputDirection = Vector3.Slerp(Motor.CharacterForward, _lookInputVector, 1 - Mathf.Exp(-OrientationSharpness * deltaTime)).normalized;
+
+                        float lookAngle = Vector3.Angle(_lookInputVector, Vector3.zero);
+                        Debug.Log(lookAngle);
+                        
+                        currentRotation = Quaternion.LookRotation(_lookInputVector, Motor.CharacterUp);
+                        currentRotation.Normalize();
+                    }
+                    break;
+                }
         }
     }
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
@@ -220,9 +267,8 @@ public class CharacterController : MonoBehaviour, ICharacterController
 
                         // Smooth movement Velocity
                         currentVelocity = Vector3.Lerp(currentVelocity, targetMovementVelocity, 1f - Mathf.Exp(-StableMovementSharpness * deltaTime));
-
-
                     }
+
                     // Air movement
                     else
                     {
@@ -267,7 +313,7 @@ public class CharacterController : MonoBehaviour, ICharacterController
                         currentVelocity += Gravity * deltaTime;
 
                         // Drag
-                        currentVelocity *= (1f / (1f + (Drag * deltaTime)));
+                        currentVelocity *= (1f / (1f + (AirDrag * deltaTime)));
                     }
 
                     // Take into account additive velocity
@@ -276,7 +322,11 @@ public class CharacterController : MonoBehaviour, ICharacterController
                         currentVelocity += _internalVelocityAdd;
                         _internalVelocityAdd = Vector3.zero;
                     }
-
+                    break;
+                }
+            case CharacterState.Swimming:
+                {
+                    currentVelocity = Vector3.zero;
                     break;
                 }
         }
