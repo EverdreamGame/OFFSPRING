@@ -884,29 +884,13 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
-      propertyPath: gravity.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
-      propertyPath: nodeDistance
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
       propertyPath: endAttachment
       value: 
       objectReference: {fileID: 1462372176}
     - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
-      propertyPath: collisionRadius
-      value: 0.22
-      objectReference: {fileID: 0}
-    - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
       propertyPath: startAttachment
       value: 
       objectReference: {fileID: 630734650}
-    - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
-      propertyPath: collisionMask.m_Bits
-      value: 51
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
