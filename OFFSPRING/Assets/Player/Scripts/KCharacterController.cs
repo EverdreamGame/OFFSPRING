@@ -63,7 +63,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     void Awake()
     {
         // Handle initial state
-        //TransitionToState(CharacterState.Default);
+        TransitionToState(CurrentCharacterState);
 
         // Assign the characterController to the motor
         Motor.CharacterController = this;
@@ -87,6 +87,11 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 }
             case CharacterState.Swimming:
                 {
+                    // If this is ennabled while swimming you will not swim up after hitting ground
+                    if (CurrentCharacterState == CharacterState.Swimming)
+                    {
+                        Motor.SetGroundSolvingActivation(false);
+                    }
                     break;
                 }
         }
@@ -101,6 +106,11 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 }
             case CharacterState.Swimming:
                 {
+                    // If this is ennabled while swimming you will not swim up after hitting ground
+                    if (CurrentCharacterState == CharacterState.Swimming)
+                    {
+                        Motor.SetGroundSolvingActivation(true);
+                    }
                     break;
                 }
         }
@@ -154,9 +164,6 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 {
                     _moveInputVector = moveInputVector;
                     _lookInputVector = _moveInputVector;
-
-                    //Debug.Log("Input: " + _moveInputVector);
-                    Debug.Log("Look: " + _lookInputVector);
                     break;
                 }
         }
@@ -333,8 +340,37 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 }
             case CharacterState.Swimming:
                 {
-                    currentVelocity = Vector3.zero;
-                    break;
+                    // Add move input
+                    if (_moveInputVector.sqrMagnitude > 0f)
+                    {
+                        Vector3 addedVelocity = _moveInputVector * UnderwaterAccelerationSpeed * deltaTime;
+
+                        Vector3 currentVelocityOnInputsPlane = Vector3.ProjectOnPlane(currentVelocity, Motor.CharacterRight);
+
+                        // Limit air velocity from inputs
+                        if (currentVelocityOnInputsPlane.magnitude < MaxUnderwaterSpeed)
+                        {
+                            // clamp addedVel to make total vel not exceed max vel on inputs plane
+                            Vector3 newTotal = Vector3.ClampMagnitude(currentVelocityOnInputsPlane + addedVelocity, MaxUnderwaterSpeed);
+                            addedVelocity = newTotal - currentVelocityOnInputsPlane;
+                        }
+                        else
+                        {
+                            // Make sure added vel doesn't go in the direction of the already-exceeding velocity
+                            if (Vector3.Dot(currentVelocityOnInputsPlane, addedVelocity) > 0f)
+                            {
+                                addedVelocity = Vector3.ProjectOnPlane(addedVelocity, currentVelocityOnInputsPlane.normalized);
+                            }
+                        }
+
+                        // Apply added velocity
+                        currentVelocity += addedVelocity;
+                    }
+
+                    // Drag
+                    currentVelocity *= (1f / (1f + (UnderwaterDrag * deltaTime)));
+
+                break;
                 }
         }
     }
