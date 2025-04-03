@@ -476,14 +476,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2320970213435942229, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
-      propertyPath: MaxDistance
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320970213435942229, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
-      propertyPath: DefaultDistance
-      value: 20
-      objectReference: {fileID: 0}
     - target: {fileID: 4252853185476401757, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
       propertyPath: m_Name
       value: Player Underwater
@@ -527,14 +519,6 @@ PrefabInstance:
     - target: {fileID: 6372943329490065884, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6966948414467945611, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
-      propertyPath: HasPlanarConstraint
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8686284953184046257, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
-      propertyPath: m_Constraints
-      value: 98
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

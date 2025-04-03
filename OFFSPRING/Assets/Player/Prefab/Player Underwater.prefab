@@ -292,9 +292,9 @@ MonoBehaviour:
   Camera: {fileID: 1707168900077585941}
   FollowPointFraming: {x: 0, y: 0}
   FollowingSharpness: 100
-  DefaultDistance: 10
+  DefaultDistance: 20
   MinDistance: 0
-  MaxDistance: 15
+  MaxDistance: 20
   DistanceMovementSpeed: 5
   DistanceMovementSharpness: 10
   DefaultVerticalAngle: 20

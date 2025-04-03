@@ -88,10 +88,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
             case CharacterState.Swimming:
                 {
                     // If this is ennabled while swimming you will not swim up after hitting ground
-                    if (CurrentCharacterState == CharacterState.Swimming)
-                    {
-                        Motor.SetGroundSolvingActivation(false);
-                    }
+                    Motor.SetGroundSolvingActivation(false);
+                    Motor.HasPlanarConstraint = true;
                     break;
                 }
         }
@@ -107,10 +105,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
             case CharacterState.Swimming:
                 {
                     // If this is ennabled while swimming you will not swim up after hitting ground
-                    if (CurrentCharacterState == CharacterState.Swimming)
-                    {
-                        Motor.SetGroundSolvingActivation(true);
-                    }
+                    Motor.SetGroundSolvingActivation(true);
+                    Motor.HasPlanarConstraint = false;
                     break;
                 }
         }
