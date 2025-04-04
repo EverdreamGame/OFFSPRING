@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using KinematicCharacterController;
 using System.Collections;
+using KinematicCharacterController;
 
 public struct PlayerCharacterInputs
 {
@@ -21,10 +21,12 @@ public class Player : MonoBehaviour
 {
     public PlayerInputDevice CurrentInputDevice;
 
-    public KCharacterController CharacterController;
+    public KCharacterController KinematicCharacterController;
     public CharacterCamera CameraController;
 
     public Transform CameraLookAtTransform;
+
+    public Animator CharacterAnimator;
 
     private PlayerCharacterInputs _characterInputs;
     private IA_Default inputActions;
@@ -32,7 +34,8 @@ public class Player : MonoBehaviour
     void Awake()
     {
         inputActions = new IA_Default();
-        CharacterController.PlayerManager = this;
+        KinematicCharacterController.PlayerManager = this;
+        KinematicCharacterController.Animator = CharacterAnimator;
         CameraController.PlayerManager = this;
         CameraController.SetLookAtTransform(CameraLookAtTransform);
     }
@@ -54,11 +57,13 @@ public class Player : MonoBehaviour
     // ======================== HANDLE INPUTS ========================
     private void HandleCameraInput()
     {
+        // TODO MARC SPRINT 2: Esto hace 0 falta, quitalo
+
         // Handle rotating the camera along with physics movers
-        if (CameraController.RotateWithPhysicsMover && CharacterController.Motor.AttachedRigidbody != null)
+        if (CameraController.RotateWithPhysicsMover && KinematicCharacterController.Motor.AttachedRigidbody != null)
         {
-            CameraController.PlanarDirection = CharacterController.Motor.AttachedRigidbody.GetComponent<PhysicsMover>().RotationDeltaFromInterpolation * CameraController.PlanarDirection;
-            CameraController.PlanarDirection = Vector3.ProjectOnPlane(CameraController.PlanarDirection, CharacterController.Motor.CharacterUp).normalized;
+            CameraController.PlanarDirection = KinematicCharacterController.Motor.AttachedRigidbody.GetComponent<PhysicsMover>().RotationDeltaFromInterpolation * CameraController.PlanarDirection;
+            CameraController.PlanarDirection = Vector3.ProjectOnPlane(CameraController.PlanarDirection, KinematicCharacterController.Motor.CharacterUp).normalized;
         }
 
         Vector3 lookInputVector = new Vector3(_characterInputs.lookInput.x, _characterInputs.lookInput.y, 0f);
@@ -68,9 +73,8 @@ public class Player : MonoBehaviour
     }
     private void HandleCharacterInput()
     { 
-
         // Apply inputs to character
-        CharacterController.SetInputs(ref _characterInputs);
+        KinematicCharacterController.SetInputs(ref _characterInputs);
     }
     void ResetInputs()
     {

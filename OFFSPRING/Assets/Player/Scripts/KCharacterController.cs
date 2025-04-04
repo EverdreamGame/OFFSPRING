@@ -26,6 +26,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
 {
     public KinematicCharacterMotor Motor;
 
+    [HideInInspector] public Animator Animator;
     [HideInInspector] public Player PlayerManager; 
 
     public CharacterState CurrentCharacterState;
@@ -45,6 +46,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     public float MaxUnderwaterSpeed = 15f;
     public float UnderwaterAccelerationSpeed = 15f;
     public float UnderwaterDrag = 1f;
+    public float UnderwaterOrientationSharpness = 5f;
 
     [Header("Misc")]
     public List<Collider> IgnoredColliders = new List<Collider>();
@@ -89,6 +91,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 {
                     // If this is ennabled while swimming you will not swim up after hitting ground
                     Motor.SetGroundSolvingActivation(false);
+
                     Motor.HasPlanarConstraint = true;
                     break;
                 }
@@ -106,6 +109,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 {
                     // If this is ennabled while swimming you will not swim up after hitting ground
                     Motor.SetGroundSolvingActivation(true);
+
                     Motor.HasPlanarConstraint = false;
                     break;
                 }
@@ -225,12 +229,12 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 }
             case CharacterState.Swimming:
                 {
-                    if (_lookInputVector.sqrMagnitude > 0f && OrientationSharpness > 0f)
-                    {
-                        // Smoothly interpolate from current to target look direction
-                        Vector3 smoothedLookInputDirection = Vector3.Slerp(Motor.CharacterForward, _lookInputVector, 1 - Mathf.Exp(-OrientationSharpness * deltaTime)).normalized;
+                    Quaternion TargetRotation;
 
-                        Quaternion rawRotation = Quaternion.LookRotation(smoothedLookInputDirection, Motor.CharacterUp);
+                    // Get target rotation
+                    if (_lookInputVector.sqrMagnitude > 0f)
+                    {
+                        Quaternion rawRotation = Quaternion.LookRotation(_lookInputVector, Motor.CharacterUp);
                         Vector3 eulerAngles = rawRotation.eulerAngles;
 
                         // Ajustar euler angles para que el personaje no quede boca abajo
@@ -241,7 +245,23 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                             eulerAngles.x = 180 - eulerAngles.x;
                         }
 
-                        currentRotation = Quaternion.Euler(eulerAngles);
+                        TargetRotation = Quaternion.Euler(eulerAngles);
+                    }
+                    else
+                    {
+                        Vector3 eulerAngles = currentRotation.eulerAngles;
+                        TargetRotation = Quaternion.Euler(0, eulerAngles.y, 0);
+                    }
+
+                    // Set current rotation
+                    if (UnderwaterOrientationSharpness > 0)
+                    {
+                        // Smoothly interpolate from current to target rotation
+                        currentRotation = Quaternion.Slerp(currentRotation, TargetRotation, 1 - Mathf.Exp(-UnderwaterOrientationSharpness * deltaTime)).normalized;
+                    }
+                    else
+                    {
+                        currentRotation = TargetRotation;
                     }
                     break;
                 }
@@ -361,6 +381,14 @@ public class KCharacterController : MonoBehaviour, ICharacterController
 
                         // Apply added velocity
                         currentVelocity += addedVelocity;
+
+                        // Animate
+                        Animator.SetBool("isMoving", true);
+                    }
+                    else
+                    {
+                        // Animate
+                        Animator.SetBool("isMoving", false);
                     }
 
                     // Drag

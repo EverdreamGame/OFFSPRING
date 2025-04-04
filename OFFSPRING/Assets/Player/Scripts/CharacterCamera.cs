@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 
 public class CharacterCamera : MonoBehaviour
 {
@@ -83,6 +82,8 @@ public class CharacterCamera : MonoBehaviour
     {
         //HandleObstructions(deltaTime);
         //UpdatePositionAndRotation(deltaTime, lookDirection);
+
+        // TODO MARC SPRINT 2: Arregla la camara en el sprint 2
 
         _currentFollowPosition = Vector3.Lerp(_currentFollowPosition, LookAtTransform.position, 1f - Mathf.Exp(-FollowingSharpness * deltaTime));
         transform.position = _currentFollowPosition + (Vector3.right * DefaultDistance);
