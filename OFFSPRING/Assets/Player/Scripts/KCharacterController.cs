@@ -48,6 +48,9 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     public float UnderwaterDrag = 1f;
     public float UnderwaterOrientationSharpness = 5f;
 
+    [Header("Joints & Constrains")]
+    // TODO MARC SPRINT 2: Referencia al interactuable con constraint
+
     [Header("Misc")]
     public List<Collider> IgnoredColliders = new List<Collider>();
     public BonusOrientationMethod BonusOrientationMethod = BonusOrientationMethod.None;
@@ -275,6 +278,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
             _setVelocityRequest = false;
             return;
         }
+
+        // TODO MARC SPRINT 2: if interactuable != null llamar a funcion de posicion
 
         switch (CurrentCharacterState)
         {
