@@ -88,7 +88,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2
+  m_Height: 2.25
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8686284953184046257
@@ -163,7 +163,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Capsule: {fileID: 6203530856662822716}
   CapsuleRadius: 0.5
-  CapsuleHeight: 2
+  CapsuleHeight: 2.25
   CapsuleYOffset: 0
   CapsulePhysicsMaterial: {fileID: 0}
   GroundDetectionExtraDistance: 0
@@ -465,7 +465,7 @@ GameObject:
   - component: {fileID: 5602381151164316513}
   m_Layer: 0
   m_Name: Player Underwater
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

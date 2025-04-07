@@ -382,11 +382,17 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                         // Apply added velocity
                         currentVelocity += addedVelocity;
 
+                        // Set capsule direction
+                        Motor.Capsule.direction = 2; // Z-Direction
+
                         // Animate
                         Animator.SetBool("isMoving", true);
                     }
                     else
                     {
+                        // Set capsule direction
+                        Motor.Capsule.direction = 1; // Y-Direction
+
                         // Animate
                         Animator.SetBool("isMoving", false);
                     }
