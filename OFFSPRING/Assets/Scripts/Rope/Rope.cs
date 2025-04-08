@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Rope3D : MonoBehaviour
+[RequireComponent(typeof(LineRenderer))]
+public class Rope : MonoBehaviour
 {
     [Header("Rope Settings")]
     [SerializeField] private GameObject nodePrefab;
@@ -10,8 +11,8 @@ public class Rope3D : MonoBehaviour
     [SerializeField] private float ropeWidth = 0.1f;
 
     [Header("Attachment Points")]
-    [SerializeField] private Transform startAttachment;
-    [SerializeField] private Transform endAttachment;
+    public Transform startAttachment;
+    public Transform endAttachment;
 
     [Header("Physics Settings")]
     [SerializeField] private Vector3 gravity = new Vector3(0, -9.8f, 0);
@@ -25,11 +26,10 @@ public class Rope3D : MonoBehaviour
     [SerializeField] private int solverIterations = 3;
 
     private LineRenderer lineRenderer;
-    private List<RopeNode> nodes = new List<RopeNode>();
+    [HideInInspector] public List<RopeNode> nodes = new List<RopeNode>();
     private List<float> nodeSpeeds = new List<float>();
-    private float ropeLength;
+    [HideInInspector] public float ropeLength;
 
-    public float CurrentLength => CalculateActualRopeLength(); // Now calculates real path length
     public float RestLength => (totalNodes - 1) * nodeDistance;
     public Vector3 StartPoint => startAttachment != null ? startAttachment.position : nodes[0].Position;
     public Vector3 EndPoint => endAttachment != null ? endAttachment.position : nodes[nodes.Count - 1].Position;
@@ -47,11 +47,8 @@ public class Rope3D : MonoBehaviour
     {
         float dt = Time.fixedDeltaTime;
 
-        // Calculate actual rope length along all segments
-        float currentActualLength = CalculateActualRopeLength();
-
         // Enforce fixed length between attachments
-        if (startAttachment != null && endAttachment != null && currentActualLength > ropeLength)
+        if (IsRopeMaxExtent())
         {
             // Calculate the direction from each attachment to the next node
             Vector3 startToNext = nodes[1].Position - startAttachment.position;
@@ -63,7 +60,7 @@ public class Rope3D : MonoBehaviour
                 Vector3 startDirection = startToNext.normalized;
                 Vector3 endDirection = endToPrev.normalized;
 
-                float distanceToCorrect = currentActualLength - ropeLength;
+                float distanceToCorrect = CalculateActualRopeLength() - ropeLength;
 
                 // Calculate correction amounts (distribute between both ends)
                 float startCorrection = distanceToCorrect * 0.5f;
@@ -130,6 +127,10 @@ public class Rope3D : MonoBehaviour
         }
     }
 
+    public bool IsRopeMaxExtent()
+    {
+        return startAttachment != null && endAttachment != null && CalculateActualRopeLength() > ropeLength;
+    }
     private void InitializeRope()
     {
         // Clear existing nodes
@@ -156,7 +157,7 @@ public class Rope3D : MonoBehaviour
         lineRenderer.endWidth = ropeWidth;
     }
     
-    private float CalculateActualRopeLength()
+    public float CalculateActualRopeLength()
     {
         float length = 0f;
         for (int i = 0; i < nodes.Count - 1; i++)
