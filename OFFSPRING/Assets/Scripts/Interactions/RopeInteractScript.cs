@@ -112,7 +112,7 @@ public class RopeInteractScript : ParentInteractionScript
         Vector3 coneDirection = -currentRopeDirection.normalized;
 
         // Centro del cono
-        Gizmos.color = Color.green;
+        Gizmos.color = Color.white;
         Gizmos.DrawRay(currentRopeNode.Position, coneDirection * 5);
 
         // Bordes del cono
@@ -121,7 +121,7 @@ public class RopeInteractScript : ParentInteractionScript
         Vector3 leftDirection = leftRotation * coneDirection;
         Vector3 rightDirection = rightRotation * coneDirection;
 
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.red;
         Gizmos.DrawRay(currentRopeNode.Position, leftDirection * 5);
         Gizmos.DrawRay(currentRopeNode.Position, rightDirection * 5);
     }

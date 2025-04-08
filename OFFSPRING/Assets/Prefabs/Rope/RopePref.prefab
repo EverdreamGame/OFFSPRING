@@ -169,3 +169,4 @@ MonoBehaviour:
   solverIterations: 1
   nodes: []
   ropeLength: 0
+  angleTolerance: 2

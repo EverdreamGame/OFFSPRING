@@ -10,7 +10,7 @@ public class PlayerInteractionScript : MonoBehaviour
 
     [Space]
     private bool canInteract;
-    private Collider[] collider;
+    private Collider[] interactedCollider;
     public Collider primerColliderParaInteractuar;
 
     private void Start()
@@ -18,7 +18,7 @@ public class PlayerInteractionScript : MonoBehaviour
         player = Player.Instance;
         canInteract = false;
 
-        collider = new Collider[1];
+        interactedCollider = new Collider[1];
     }
 
     private void Update()
@@ -26,11 +26,11 @@ public class PlayerInteractionScript : MonoBehaviour
         // No queremos que interactue con más de una cosa a la vez
         if (currentObjectInteraction != null) return;
         
-        int hits = Physics.OverlapSphereNonAlloc(transform.position, interactionRadius, collider, interactionLayerMask);
+        int hits = Physics.OverlapSphereNonAlloc(transform.position, interactionRadius, interactedCollider, interactionLayerMask);
 
         if (hits > 0)
         {
-            primerColliderParaInteractuar = collider[0];
+            primerColliderParaInteractuar = interactedCollider[0];
 
             //TODO -> UI/Sonido para indicar que puede interactuar
             canInteract = true;

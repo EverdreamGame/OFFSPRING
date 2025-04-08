@@ -38,7 +38,7 @@ public class Rope : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
         InitializeRope();
-        ropeLength = RestLength;
+        ropeLength = RestLength + 5f;
     }
 
     void Update() => DrawRope();
@@ -111,6 +111,7 @@ public class Rope : MonoBehaviour
         {
             ApplyDistanceConstraints();
             HandleCollisions();
+            ApplyPlaneConstraint();
         }
 
         // Update attachment points
@@ -129,8 +130,42 @@ public class Rope : MonoBehaviour
 
     public bool IsRopeMaxExtent()
     {
-        return startAttachment != null && endAttachment != null && CalculateActualRopeLength() > ropeLength;
+        if (nodes.Count < 2 || (startAttachment == null && endAttachment == null))
+            return false;
+
+        // Check that all non-colliding segments form straight lines
+        if (!NonCollidingNodesAreStraight())
+            return false;
+
+        // Check rope is at full extension
+        float actualLength = CalculateActualRopeLength();
+        return actualLength >= RestLength - (nodeDistance * 0.5f);
     }
+
+    [Space]
+    public float angleTolerance = 10f; // degrees
+    private bool NonCollidingNodesAreStraight()
+    {
+        for (int i = 1; i < nodes.Count - 1; i++)
+        {
+            RopeNode prev = nodes[i - 1];
+            RopeNode current = nodes[i];
+            RopeNode next = nodes[i + 1];
+
+            if (current.isColliding) continue;
+
+            Vector3 dirA = (current.Position - prev.Position).normalized;
+            Vector3 dirB = (next.Position - current.Position).normalized;
+
+            float angle = Vector3.Angle(dirA, dirB);
+
+            if (angle > angleTolerance)
+                return false;
+        }
+
+        return true;
+    }
+
     private void InitializeRope()
     {
         // Clear existing nodes
@@ -216,6 +251,14 @@ public class Rope : MonoBehaviour
         }
     }
 
+    private void ApplyPlaneConstraint()
+    {
+        foreach (var node in nodes)
+        {
+            node.Position = new Vector3(0f, node.Position.y, node.Position.z);
+        }
+    }
+
     private void HandleCollisions()
     {
         for (int i = 0; i < nodes.Count; i++)
@@ -254,6 +297,7 @@ public class Rope : MonoBehaviour
                             validHits++;
                         }
                     }
+                    node.isColliding = true;
                 }
 
                 if (validHits > 0)
@@ -261,6 +305,10 @@ public class Rope : MonoBehaviour
                     node.Position += pushDirection / validHits;
                     node.previousPosition = node.Position;
                 }
+            }
+            else
+            {
+                node.isColliding = false;
             }
         }
     }
@@ -275,5 +323,14 @@ public class Rope : MonoBehaviour
     {
         startAttachment = start;
         endAttachment = end;
+    }
+
+    void OnDrawGizmos()
+    {    
+        Gizmos.color = IsRopeMaxExtent() ? Color.red : Color.green;
+        for (int i = 0; i < nodes.Count - 1; i++)
+        {
+            Gizmos.DrawLine(nodes[i].Position, nodes[i+1].Position);
+        }
     }
 }
