@@ -96,6 +96,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     Motor.SetGroundSolvingActivation(false);
 
                     Motor.HasPlanarConstraint = true;
+
+                    Motor.SetCapsuleDimensions(1.14f, 2.25f, 0f); // TODO MARC: Cuando haya animaciones y modelo definitivos cambiar esto
                     break;
                 }
         }
@@ -114,6 +116,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     Motor.SetGroundSolvingActivation(true);
 
                     Motor.HasPlanarConstraint = false;
+
+                    Motor.SetCapsuleDimensions(0.5f, 2.25f, 0f);
                     break;
                 }
         }
@@ -386,8 +390,9 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                         // Apply added velocity
                         currentVelocity += addedVelocity;
 
+                        // TODO MARC: Cuando haya animaciones y modelo definitivos arreglar esto
                         // Set capsule direction
-                        Motor.Capsule.direction = 2; // Z-Direction
+                        //Motor.Capsule.direction = 2; // Z-Direction
 
                         // Animate
                         Animator.SetBool("isMoving", true);
@@ -395,7 +400,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     else
                     {
                         // Set capsule direction
-                        Motor.Capsule.direction = 1; // Y-Direction
+                        //Motor.Capsule.direction = 1; // Y-Direction
 
                         // Animate
                         Animator.SetBool("isMoving", false);
