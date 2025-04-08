@@ -153,8 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nodePrefab: {fileID: 8107770096615882824, guid: 6701c86b753ce6c458f2d3566d870194, type: 3}
-  nodeDistance: 0.25
-  totalNodes: 30
+  nodeDistance: 0.1
+  totalNodes: 150
   ropeWidth: 0.5
   startAttachment: {fileID: 0}
   endAttachment: {fileID: 0}
@@ -166,4 +166,6 @@ MonoBehaviour:
     m_Bits: 51
   collisionRadius: 0.22
   skinWidth: 0.02
-  solverIterations: 50
+  solverIterations: 1
+  nodes: []
+  ropeLength: 0

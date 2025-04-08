@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class RopeInteractScript : ParentInteractionScript
 {
-    public LayerMask interactionLayerMask;
-
     RopeNode currentRopeNode;
     RopeNode previousRopeNode;
 
@@ -12,6 +10,9 @@ public class RopeInteractScript : ParentInteractionScript
 
     private void Start()
     {
+        //Cambiar la layer del objeto
+        gameObject.layer = LayerMask.NameToLayer("Interactions");
+
         // Asignar las referencias necesarias 
         ropeReference = GetComponentInParent<Rope>();
         currentRopeNode = GetComponent<RopeNode>();
@@ -99,5 +100,29 @@ public class RopeInteractScript : ParentInteractionScript
 
         float angleToPoint = Vector3.Angle(coneDirection, toPosition);
         return angleToPoint <= (coneAngleInDegrees * 0.5f);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Vector3 currentRopeDirection = currentRopeNode.Position - previousRopeNode.Position;
+
+        if (currentRopeDirection == Vector3.zero)
+            return;
+
+        Vector3 coneDirection = -currentRopeDirection.normalized;
+
+        // Centro del cono
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(currentRopeNode.Position, coneDirection * 5);
+
+        // Bordes del cono
+        Quaternion leftRotation = Quaternion.AngleAxis(-coneAngleInDegrees * 0.5f, Vector3.up);
+        Quaternion rightRotation = Quaternion.AngleAxis(coneAngleInDegrees * 0.5f, Vector3.up);
+        Vector3 leftDirection = leftRotation * coneDirection;
+        Vector3 rightDirection = rightRotation * coneDirection;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawRay(currentRopeNode.Position, leftDirection * 5);
+        Gizmos.DrawRay(currentRopeNode.Position, rightDirection * 5);
     }
 }

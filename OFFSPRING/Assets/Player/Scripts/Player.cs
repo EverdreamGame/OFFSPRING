@@ -20,19 +20,32 @@ public enum PlayerInputDevice
 public class Player : MonoBehaviour
 {
     public PlayerInputDevice CurrentInputDevice;
-
+    [Space]
     public KCharacterController KinematicCharacterController;
     public CharacterCamera CameraController;
 
+    [Space]
     public Transform CameraLookAtTransform;
 
+    [Space]
     public Animator CharacterAnimator;
 
+    [Space]
+    public PlayerInteractionScript playerInteractionScript;
+
+    [Space]
     private PlayerCharacterInputs _characterInputs;
     private IA_Default inputActions;
 
+    public static Player Instance { get; private set; }
+
     void Awake()
     {
+        if (Instance != null)
+            Destroy(gameObject);
+        else
+            Instance = this;
+
         inputActions = new IA_Default();
         KinematicCharacterController.PlayerManager = this;
         KinematicCharacterController.Animator = CharacterAnimator;
@@ -103,6 +116,13 @@ public class Player : MonoBehaviour
         CurrentInputDevice = GetCurrentInputDevice(context);
     }
 
+    void OnInteract(InputAction.CallbackContext context)
+    {
+        playerInteractionScript.Interaction();
+
+        CurrentInputDevice = GetCurrentInputDevice(context);
+    }
+
     PlayerInputDevice GetCurrentInputDevice(InputAction.CallbackContext context)
     {
         if (context.control.device is UnityEngine.InputSystem.Gamepad)
@@ -126,7 +146,11 @@ public class Player : MonoBehaviour
         inputActions.Gameplay.Move.canceled += OnWalk;
         inputActions.Gameplay.Look.performed += OnLook;
         inputActions.Gameplay.Look.canceled += OnLook;
+
+        //Interaction
+        inputActions.Gameplay.Interact.performed += OnInteract;
     }
+
     void OnDisable()
     {
         inputActions.Gameplay.Disable();
@@ -135,5 +159,8 @@ public class Player : MonoBehaviour
         inputActions.Gameplay.Move.canceled -= OnWalk;
         inputActions.Gameplay.Look.performed -= OnLook;
         inputActions.Gameplay.Look.canceled -= OnLook;
+
+        //Interaction
+        inputActions.Gameplay.Interact.performed -= OnInteract;
     }
 }

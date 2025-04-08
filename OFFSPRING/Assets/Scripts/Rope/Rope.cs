@@ -152,6 +152,9 @@ public class Rope : MonoBehaviour
             spawnPos.y -= nodeDistance;
         }
 
+        nodes[0].gameObject.AddComponent<RopeInteractScript>();
+        nodes[nodes.Count-1].gameObject.AddComponent<RopeInteractScript>();
+
         lineRenderer.positionCount = totalNodes;
         lineRenderer.startWidth = ropeWidth;
         lineRenderer.endWidth = ropeWidth;

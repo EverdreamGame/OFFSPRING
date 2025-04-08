@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &29387556 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3769100506340762913, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
+  m_PrefabInstance: {fileID: 1306112640}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &135002268
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,6 +306,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Underwater
       objectReference: {fileID: 0}
+    - target: {fileID: 5602381151164316513, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
+      propertyPath: playerInteractionScript
+      value: 
+      objectReference: {fileID: 1911980205}
     - target: {fileID: 6372943329490065884, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -352,7 +361,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3769100506340762913, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1911980205}
   m_SourcePrefab: {fileID: 100100000, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
 --- !u!1 &1347095391
 GameObject:
@@ -456,7 +468,7 @@ Transform:
   m_GameObject: {fileID: 1347095391}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.28, y: -4.76, z: 0}
+  m_LocalPosition: {x: 0.99, y: -4.76, z: -0}
   m_LocalScale: {x: 3.720372, y: 3.720372, z: 3.720372}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -838,11 +850,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!4 &1911980200 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2303019708550372689, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
-  m_PrefabInstance: {fileID: 1306112640}
+--- !u!114 &1911980205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29387556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1059f2d492d53164c8ddca658c5459b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  interactionRadius: 2
+  currentObjectInteraction: {fileID: 0}
+  primerColliderParaInteractuar: {fileID: 0}
 --- !u!1001 &6812514246726972229
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -896,25 +921,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
-      propertyPath: totalNodes
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
-      propertyPath: nodeDistance
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
-      propertyPath: endAttachment
-      value: 
-      objectReference: {fileID: 1911980200}
-    - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
       propertyPath: startAttachment
       value: 
       objectReference: {fileID: 630734650}
-    - target: {fileID: 9208907506478509061, guid: 0a181e7009c3dc54aa508d52999b880f, type: 3}
-      propertyPath: solverIterations
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
