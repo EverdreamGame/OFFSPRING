@@ -3,7 +3,7 @@ using TMPro;
 using DG.Tweening;
 
 [RequireComponent(typeof(TextMeshPro))]
-public class TextAnimation : MonoBehaviour
+public class TextAnimations : MonoBehaviour
 {
     public float delayBetweenLetters = 0.05f;
     private TextMeshPro tmp;
@@ -17,14 +17,18 @@ public class TextAnimation : MonoBehaviour
         tmp.maxVisibleCharacters = 0;
     }
 
-    void Start()
-    {
-        ShowTextLetterByLetter();
-    }
+    //public void ShowTextLetterByLetter()
+    //{
+    //    tmp.text = fullText; // En caso de que haya sido modificado
+    //    tmp.ForceMeshUpdate();
 
-    public void ShowTextLetterByLetter()
+    //    tmp.maxVisibleCharacters = 0;
+    //    StartCoroutine(RevealLetters());
+    //}
+
+    public void ShowTextLetterByLetter(string text)
     {
-        tmp.text = fullText; // En caso de que haya sido modificado
+        tmp.text = text; // En caso de que haya sido modificado
         tmp.ForceMeshUpdate();
 
         tmp.maxVisibleCharacters = 0;

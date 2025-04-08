@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: testText
   m_EditorClassIdentifier: 
   textType: 0
-  text: hola jose
+  content: Hola Jose

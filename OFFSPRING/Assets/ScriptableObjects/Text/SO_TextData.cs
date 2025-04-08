@@ -11,7 +11,7 @@ public enum TextType
 public class SO_TextData : ScriptableObject
 {
     public TextType textType;
-    public string text;
+    public string content;
 
     private bool _enabled = true;
     private bool _finished = false;
