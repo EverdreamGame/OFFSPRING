@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 2303019708550372689}
   - component: {fileID: 6203530856662822716}
   - component: {fileID: 8686284953184046257}
+  - component: {fileID: 6589558420457221834}
   - component: {fileID: 8129900605315666607}
   - component: {fileID: 6966948414467945611}
   m_Layer: 0
@@ -118,6 +119,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &6589558420457221834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3769100506340762913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1059f2d492d53164c8ddca658c5459b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  interactionRadius: 2
+  currentObjectInteraction: {fileID: 0}
+  primerColliderParaInteractuar: {fileID: 0}
 --- !u!114 &8129900605315666607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,6 +523,7 @@ MonoBehaviour:
   CameraController: {fileID: 2320970213435942229}
   CameraLookAtTransform: {fileID: 911296609907503220}
   CharacterAnimator: {fileID: 8553595227569234077}
+  playerInteractionScript: {fileID: 6589558420457221834}
 --- !u!1 &5603421947109404207
 GameObject:
   m_ObjectHideFlags: 0

@@ -49,7 +49,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     public float UnderwaterOrientationSharpness = 5f;
 
     [Header("Joints & Constrains")]
-    // TODO MARC SPRINT 2: Referencia al interactuable con constraint
+    // TODO MARC: Cosas de interacciones como pesos o yoquese
 
     [Header("Misc")]
     public List<Collider> IgnoredColliders = new List<Collider>();
@@ -279,8 +279,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
             return;
         }
 
-        // TODO MARC SPRINT 2: if interactuable != null llamar a funcion de posicion
-
+        // Manage character state
         switch (CurrentCharacterState)
         {
             case CharacterState.Default:
@@ -407,6 +406,23 @@ public class KCharacterController : MonoBehaviour, ICharacterController
 
                 break;
                 }
+        }
+
+        // Manage movement constraints when interacting with an object
+        ParentInteractionScript interaction = PlayerManager.playerInteractionScript.currentObjectInteraction;
+        if (interaction != null)
+        {
+            if (interaction.CheckNextPlayerPositionAvailability(currentVelocity.normalized, currentVelocity.magnitude))
+            {
+                Debug.Log("Can move");
+            }
+            else
+            {
+                Debug.Log("Can not move");
+                currentVelocity = Vector3.zero;
+            }
+
+            //currentVelocity = currentVelocity.normalized * interaction.GetMaximumSpeedToReachTheExtendedPosition(currentVelocity.normalized, currentVelocity.magnitude);
         }
     }
     public void AfterCharacterUpdate(float deltaTime)

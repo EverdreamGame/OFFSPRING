@@ -56,11 +56,11 @@ public class RopeInteractScript : ParentInteractionScript
             }
         }
         // Si no está al máximo, comprueba si en el próximo step lo estará
-        else
-        {
-            float restRopeLength = ropeReference.ropeLength - ropeReference.CalculateActualRopeLength();
-            if (speed > restRopeLength) return false;
-        }
+        //else
+        //{
+        //    float restRopeLength = ropeReference.ropeLength - ropeReference.CalculateActualRopeLength();
+        //    if (speed > restRopeLength) return false;
+        //}
 
         return true;
     }
