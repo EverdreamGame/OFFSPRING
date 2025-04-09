@@ -97,7 +97,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
 
                     Motor.HasPlanarConstraint = true;
 
-                    Motor.SetCapsuleDimensions(1.14f, 2.25f, 0f); // TODO MARC: Cuando haya animaciones y modelo definitivos cambiar esto
+                    // TODO MARC: Cuando haya animaciones y modelo definitivos cambiar esto
+                    Motor.SetCapsuleDimensions(1.14f, 2.25f, 0f);
                     break;
                 }
         }
@@ -236,6 +237,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 }
             case CharacterState.Swimming:
                 {
+                    // TODO MARC SPRINT 2: Hacer que el personaje rote segun el plano perpendicular a la dirección planar de la camara.
+                    
                     Quaternion TargetRotation;
 
                     // Get target rotation
@@ -367,7 +370,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     // Add move input
                     if (_moveInputVector.sqrMagnitude > 0f)
                     {
-                        Vector3 addedVelocity = _moveInputVector * UnderwaterAccelerationSpeed * deltaTime;
+                        Vector3 addedVelocity = deltaTime * UnderwaterAccelerationSpeed * _moveInputVector;
 
                         Vector3 currentVelocityOnInputsPlane = Vector3.ProjectOnPlane(currentVelocity, Motor.CharacterRight);
 

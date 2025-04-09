@@ -19,21 +19,21 @@ public enum PlayerInputDevice
 
 public class Player : MonoBehaviour
 {
+    // Public
+    [Header("Input device (read only)")]
     public PlayerInputDevice CurrentInputDevice;
+
     [Space]
+    [Header("Scripts")]
     public KCharacterController KinematicCharacterController;
     public CharacterCamera CameraController;
-
-    [Space]
-    public Transform CameraLookAtTransform;
-
-    [Space]
-    public Animator CharacterAnimator;
-
-    [Space]
     public PlayerInteractionScript playerInteractionScript;
 
     [Space]
+    [Header("Components")]
+    public Animator CharacterAnimator;
+
+    // Private
     private PlayerCharacterInputs _characterInputs;
     private IA_Default inputActions;
 
@@ -50,7 +50,6 @@ public class Player : MonoBehaviour
         KinematicCharacterController.PlayerManager = this;
         KinematicCharacterController.Animator = CharacterAnimator;
         CameraController.PlayerManager = this;
-        CameraController.SetLookAtTransform(CameraLookAtTransform);
     }
 
     private void Start()
@@ -63,27 +62,10 @@ public class Player : MonoBehaviour
         _characterInputs.cameraRotation = CameraController.transform.rotation;
 
         HandleCharacterInput();
-        HandleCameraInput();
         ResetInputs();
     }
 
     // ======================== HANDLE INPUTS ========================
-    private void HandleCameraInput()
-    {
-        // TODO MARC SPRINT 2: Esto hace 0 falta, quitalo
-
-        // Handle rotating the camera along with physics movers
-        if (CameraController.RotateWithPhysicsMover && KinematicCharacterController.Motor.AttachedRigidbody != null)
-        {
-            CameraController.PlanarDirection = KinematicCharacterController.Motor.AttachedRigidbody.GetComponent<PhysicsMover>().RotationDeltaFromInterpolation * CameraController.PlanarDirection;
-            CameraController.PlanarDirection = Vector3.ProjectOnPlane(CameraController.PlanarDirection, KinematicCharacterController.Motor.CharacterUp).normalized;
-        }
-
-        Vector3 lookInputVector = new Vector3(_characterInputs.lookInput.x, _characterInputs.lookInput.y, 0f);
-
-        // Apply inputs to the camera
-        CameraController.UpdateWithInput(Time.deltaTime, lookInputVector);
-    }
     private void HandleCharacterInput()
     { 
         // Apply inputs to character
