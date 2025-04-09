@@ -308,31 +308,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerManager: {fileID: 0}
-  mouseSensitivity: 1
-  controllerSensitivity: 1
-  Camera: {fileID: 1707168900077585941}
-  FollowPointFraming: {x: 0, y: 0}
-  FollowingSharpness: 20
+  FollowingSharpness: 15
+  DirectionFromPlayer: {x: 1, y: 0, z: 0}
   DefaultDistance: 20
   MinDistance: 0
   MaxDistance: 20
-  DistanceMovementSpeed: 5
-  DistanceMovementSharpness: 10
-  DefaultVerticalAngle: 20
-  MinVerticalAngle: -40
-  MaxVerticalAngle: 40
   RotationSpeed: 1
-  RotationSharpness: 10000
-  RotateWithPhysicsMover: 0
-  LockAxisX: 0
-  LockAxisY: 0
+  RotationSharpness: 5
+  TargetRollAngle: 0
   isCameraShaking: 0
-  ObstructionCheckRadius: 0.2
-  ObstructionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  ObstructionSharpness: 10000
-  IgnoredColliders: []
+  LookAtTransform: {fileID: 911296609907503220}
+  FollowTransfrom: {fileID: 0}
 --- !u!114 &3249971218778293378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -521,9 +507,8 @@ MonoBehaviour:
   CurrentInputDevice: 0
   KinematicCharacterController: {fileID: 8129900605315666607}
   CameraController: {fileID: 2320970213435942229}
-  CameraLookAtTransform: {fileID: 911296609907503220}
-  CharacterAnimator: {fileID: 8553595227569234077}
   playerInteractionScript: {fileID: 6589558420457221834}
+  CharacterAnimator: {fileID: 8553595227569234077}
 --- !u!1 &5603421947109404207
 GameObject:
   m_ObjectHideFlags: 0

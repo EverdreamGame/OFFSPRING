@@ -764,14 +764,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 7.990804
       objectReference: {fileID: 0}
-    - target: {fileID: 2320970213435942229, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
-      propertyPath: FollowTransfrom
-      value: 
-      objectReference: {fileID: 765578335}
-    - target: {fileID: 2320970213435942229, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
-      propertyPath: LookAtTransform
-      value: 
-      objectReference: {fileID: 381376095503100315}
     - target: {fileID: 2636032000366793420, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -18.449238
@@ -872,6 +864,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.09321135
       objectReference: {fileID: 0}
+    - target: {fileID: 5721669145122630779, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5721669145122630779, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6123267654544818564, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -25.04961
@@ -955,6 +955,10 @@ PrefabInstance:
     - target: {fileID: 6908226762980400331, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -139.85098
+      objectReference: {fileID: 0}
+    - target: {fileID: 6966948414467945611, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
+      propertyPath: HasPlanarConstraint
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7244811262593185609, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1045,11 +1049,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
---- !u!4 &381376095503100315 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 911296609907503220, guid: 620c7965c310bdf45b261b198f19bb15, type: 3}
-  m_PrefabInstance: {fileID: 381376095503100314}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

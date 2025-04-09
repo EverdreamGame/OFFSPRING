@@ -127,18 +127,6 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     // ========================================== INPUTS ==========================================
     public void SetInputs(ref PlayerCharacterInputs inputs)
     {
-        Vector3 moveInputVector;
-
-        // Clamp input
-        if (CurrentCharacterState == CharacterState.Swimming)
-        {
-            moveInputVector = Vector3.ClampMagnitude(new Vector3(0, inputs.walkInput.y, inputs.walkInput.x), 1f);
-        }
-        else
-        {
-            moveInputVector = Vector3.ClampMagnitude(new Vector3(inputs.walkInput.x, 0, inputs.walkInput.y), 1f);
-        }
-
         // Calculate camera direction and rotation on the character plane
         Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(inputs.cameraRotation * Vector3.forward, Motor.CharacterUp).normalized;
         if (cameraPlanarDirection.sqrMagnitude == 0f)
@@ -147,12 +135,13 @@ public class KCharacterController : MonoBehaviour, ICharacterController
         }
         Quaternion cameraPlanarRotation = Quaternion.LookRotation(cameraPlanarDirection, Motor.CharacterUp);
 
+        // Calculate Move and Look Input Vector 
         switch (CurrentCharacterState)
         {
             case CharacterState.Default:
                 {
                     // Move and look inputs
-                    _moveInputVector = cameraPlanarRotation * moveInputVector;
+                    _moveInputVector = cameraPlanarRotation * Vector3.ClampMagnitude(new Vector3(inputs.walkInput.x, 0, inputs.walkInput.y), 1f);
 
                     switch (OrientationMethod)
                     {
@@ -170,7 +159,12 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 }
             case CharacterState.Swimming:
                 {
-                    _moveInputVector = moveInputVector;
+                    // Get camera-relative input when swimming
+                    Vector3 camRight = inputs.cameraRotation * Vector3.right;
+                    Vector3 camUp = inputs.cameraRotation * Vector3.up;
+
+                    // Reorient input Y (vertical) y Z (forward) al espacio de la cámara
+                    _moveInputVector = (inputs.walkInput.y * camUp + inputs.walkInput.x * camRight).normalized;
                     _lookInputVector = _moveInputVector;
                     break;
                 }
@@ -247,14 +241,13 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                         Quaternion rawRotation = Quaternion.LookRotation(_lookInputVector, Motor.CharacterUp);
                         Vector3 eulerAngles = rawRotation.eulerAngles;
 
-                        // Ajustar euler angles para que el personaje no quede boca abajo
+                        // Ajustar euler angles para que el personaje no quede boca arriba
                         eulerAngles.z = 0;
                         if (eulerAngles.x > 90 && eulerAngles.x < 270)
                         {
                             eulerAngles.y += 180;
                             eulerAngles.x = 180 - eulerAngles.x;
                         }
-
                         TargetRotation = Quaternion.Euler(eulerAngles);
                     }
                     else
