@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class CharacterCamera : MonoBehaviour
 {
@@ -11,16 +12,16 @@ public class CharacterCamera : MonoBehaviour
     public float FollowingSharpness = 1f;
 
     [Space]
-    [Header("Distance")]
+    [Header("Position")]
+    public Vector3 DirectionFromPlayer = Vector3.right;
     public float DefaultDistance = 6f;
     public float MinDistance = 0f;
     public float MaxDistance = 10f;
-    public float DistanceMovementSpeed = 5f;
-    public float DistanceMovementSharpness = 10f;
+    //public float DistanceMovementSpeed = 5f;
+    //public float DistanceMovementSharpness = 10f;
 
     [Space]
     [Header("Rotation")]
-    public Vector3 DirectionFromPlayer = Vector3.right;
     public float RotationSpeed = 1f;
     public float RotationSharpness = 1000f;
 
@@ -29,7 +30,7 @@ public class CharacterCamera : MonoBehaviour
     public bool isCameraShaking = false;
 
     [Space]
-    [Header("Transforms")]
+    [Header("Position")]
     /// <summary>
     /// Transform the camera will look at
     /// </summary>
@@ -57,17 +58,25 @@ public class CharacterCamera : MonoBehaviour
 
     void Update()
     {
+        // TODO MARC SPRINT 2: Haz esto mas limpio
+
         // Position
         Vector3 targetPosition;
         if (FollowTransfrom != null)
         {
             targetPosition = FollowTransfrom.position;
         }
-        else
-        {
+        else 
+        { 
             targetPosition = LookAtTransform.position + (DirectionFromPlayer * DefaultDistance);
         }
         transform.position = Vector3.Lerp(transform.position, targetPosition, 1f - Mathf.Exp(-FollowingSharpness * Time.deltaTime));
+
+        // TODO MARC SPRINT 2: Haz roll de la camara yeah perdonen
+
+        // Rotation
+        Vector3 targetDirection = (LookAtTransform.position - transform.position).normalized;
+        transform.forward = Vector3.Slerp(transform.forward, targetDirection, 1f - Mathf.Exp(-RotationSharpness * Time.deltaTime));
     }
 
     // ========================================== CAMERA SHAKE ==========================================
