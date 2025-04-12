@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
-using KinematicCharacterController;
 
 public struct PlayerCharacterInputs
 {
     public Vector2 walkInput;
     public Vector2 lookInput;
+    public bool sprintInput;
+    public bool jumpInput;
 
     public Quaternion cameraRotation;
 }
@@ -55,6 +56,9 @@ public class Player : MonoBehaviour
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+
+        _characterInputs.sprintInput = false;
+        _characterInputs.jumpInput = false;
     }
 
     private void Update()
@@ -81,6 +85,7 @@ public class Player : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         // Reset inputs
+        _characterInputs.jumpInput = false;
     }
 
     // ======================== INPUT ACTIONS ========================
@@ -101,6 +106,21 @@ public class Player : MonoBehaviour
     void OnInteract(InputAction.CallbackContext context)
     {
         playerInteractionScript.Interaction();
+
+        CurrentInputDevice = GetCurrentInputDevice(context);
+    }
+
+    void OnSprint(InputAction.CallbackContext context)
+    {
+        if (context.ReadValue<float>() > 0.1f) _characterInputs.sprintInput = true;
+        else _characterInputs.sprintInput = false;
+
+        CurrentInputDevice = GetCurrentInputDevice(context);
+    }
+
+    void OnJump(InputAction.CallbackContext context)
+    {
+        _characterInputs.jumpInput = true;
 
         CurrentInputDevice = GetCurrentInputDevice(context);
     }
@@ -128,6 +148,9 @@ public class Player : MonoBehaviour
         inputActions.Gameplay.Move.canceled += OnWalk;
         inputActions.Gameplay.Look.performed += OnLook;
         inputActions.Gameplay.Look.canceled += OnLook;
+        inputActions.Gameplay.Sprint.performed += OnSprint;
+        inputActions.Gameplay.Sprint.canceled += OnSprint;
+        inputActions.Gameplay.Jump.performed += OnJump;
 
         //Interaction
         inputActions.Gameplay.Interact.performed += OnInteract;
@@ -141,6 +164,9 @@ public class Player : MonoBehaviour
         inputActions.Gameplay.Move.canceled -= OnWalk;
         inputActions.Gameplay.Look.performed -= OnLook;
         inputActions.Gameplay.Look.canceled -= OnLook;
+        inputActions.Gameplay.Sprint.performed -= OnSprint;
+        inputActions.Gameplay.Sprint.canceled -= OnSprint;
+        inputActions.Gameplay.Jump.performed -= OnJump;
 
         //Interaction
         inputActions.Gameplay.Interact.performed -= OnInteract;

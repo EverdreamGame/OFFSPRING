@@ -31,32 +31,41 @@ public class KCharacterController : MonoBehaviour, ICharacterController
 
     public CharacterState CurrentCharacterState;
 
+    [Space]
     [Header("Stable Movement")]
     public float MaxStableMoveSpeed = 10f;
     public float StableMovementSharpness = 15f;
     public float OrientationSharpness = 10f;
     public OrientationMethod OrientationMethod = OrientationMethod.TowardsMovement;
 
+    [Space]
     [Header("Air Movement")]
     public float MaxAirMoveSpeed = 15f;
     public float AirAccelerationSpeed = 15f;
     public float AirDrag = 0.1f;
 
+    [Space]
     [Header("Underwater Movement")]
-    public float MaxUnderwaterSpeed = 15f;
+    public float MaxUnderwaterSpeed = 7f;
+    public float MaxUnderwaterSprintSpeed = 15f;
+    public float UnderwaterImpulseSpeed = 22f;
     public float UnderwaterAccelerationSpeed = 15f;
     public float UnderwaterDrag = 1f;
     public float UnderwaterOrientationSharpness = 5f;
+    public float UnderwaterImpulseCooldown = 1f;
 
+    [Space]
     [Header("Joints & Constrains")]
     // TODO MARC: Cosas de interacciones como pesos o yoquese
 
+    [Space]
     [Header("Misc")]
     public List<Collider> IgnoredColliders = new List<Collider>();
     public BonusOrientationMethod BonusOrientationMethod = BonusOrientationMethod.None;
     public float BonusOrientationSharpness = 10f;
     public Vector3 Gravity = new Vector3(0, -30f, 0);
 
+    // Private fields
     Vector3 _moveInputVector = Vector3.zero;
     Vector3 _lookInputVector = Vector3.zero;
     Vector3 _internalVelocityAdd = Vector3.zero;
@@ -64,6 +73,10 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     Quaternion _targetRotation = Quaternion.identity;
     bool _setRotationRequest = false;
     bool _setVelocityRequest = false;
+    bool _jumpRequest = false;
+    bool _isSprinting = false;
+    bool _canJump = true;
+    bool _canSprint = true;
 
     void Awake()
     {
@@ -168,6 +181,17 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     _lookInputVector = _moveInputVector;
                     break;
                 }
+        }
+
+        // Other inputs
+        if (inputs.jumpInput && _canJump)
+        {
+            _jumpRequest = true;
+        }
+
+        if (_canSprint)
+        {
+            _isSprinting = inputs.sprintInput;
         }
     }
 
@@ -367,11 +391,14 @@ public class KCharacterController : MonoBehaviour, ICharacterController
 
                         Vector3 currentVelocityOnInputsPlane = Vector3.ProjectOnPlane(currentVelocity, Motor.CharacterRight);
 
-                        // Limit air velocity from inputs
-                        if (currentVelocityOnInputsPlane.magnitude < MaxUnderwaterSpeed)
+                        // Set max speed
+                        float maxSpeed = MaxUnderwaterSpeed;
+                        if (_isSprinting) maxSpeed = MaxUnderwaterSprintSpeed;
+
+                        if (currentVelocityOnInputsPlane.magnitude < maxSpeed)
                         {
                             // clamp addedVel to make total vel not exceed max vel on inputs plane
-                            Vector3 newTotal = Vector3.ClampMagnitude(currentVelocityOnInputsPlane + addedVelocity, MaxUnderwaterSpeed);
+                            Vector3 newTotal = Vector3.ClampMagnitude(currentVelocityOnInputsPlane + addedVelocity, maxSpeed);
                             addedVelocity = newTotal - currentVelocityOnInputsPlane;
                         }
                         else
@@ -435,7 +462,6 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     break;
                 }
         }
-
     }
 
     // ========================================== SET / ADD VELOCITY & ROTATION ==========================================

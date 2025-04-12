@@ -160,10 +160,13 @@ MonoBehaviour:
   MaxAirMoveSpeed: 15
   AirAccelerationSpeed: 15
   AirDrag: 0.1
-  MaxUnderwaterSpeed: 15
+  MaxUnderwaterSpeed: 3
+  MaxUnderwaterSprintSpeed: 10
+  UnderwaterImpulseSpeed: 22
   UnderwaterAccelerationSpeed: 15
   UnderwaterDrag: 1
   UnderwaterOrientationSharpness: 5
+  UnderwaterImpulseCooldown: 1
   IgnoredColliders: []
   BonusOrientationMethod: 0
   BonusOrientationSharpness: 10
@@ -313,7 +316,6 @@ MonoBehaviour:
   DefaultDistance: 20
   MinDistance: 0
   MaxDistance: 20
-  RotationSpeed: 1
   RotationSharpness: 5
   TargetRollAngle: 0
   isCameraShaking: 0
