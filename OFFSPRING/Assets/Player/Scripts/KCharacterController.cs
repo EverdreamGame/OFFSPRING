@@ -259,38 +259,40 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 {
                     // TODO MARC SPRINT 2: Hacer que el personaje rote segun el plano perpendicular a la dirección planar de la camara.
                     
-                    Quaternion TargetRotation;
-
                     // Get target rotation
-                    if (_lookInputVector.sqrMagnitude > 0f)
+                    if (_canJump) // Si se está impulsando, no gira ni se puede cambiar de dirección
                     {
-                        Quaternion rawRotation = Quaternion.LookRotation(_lookInputVector, Motor.CharacterUp);
-                        Vector3 eulerAngles = rawRotation.eulerAngles;
-
-                        // Ajustar euler angles para que el personaje no quede boca arriba
-                        eulerAngles.z = 0;
-                        if (eulerAngles.x > 90 && eulerAngles.x < 270)
+                        Quaternion TargetRotation;
+                        if (_lookInputVector.sqrMagnitude > 0f)
                         {
-                            eulerAngles.y += 180;
-                            eulerAngles.x = 180 - eulerAngles.x;
-                        }
-                        TargetRotation = Quaternion.Euler(eulerAngles);
-                    }
-                    else
-                    {
-                        Vector3 eulerAngles = currentRotation.eulerAngles;
-                        TargetRotation = Quaternion.Euler(0, eulerAngles.y, 0);
-                    }
+                            Quaternion rawRotation = Quaternion.LookRotation(_lookInputVector, Motor.CharacterUp);
+                            Vector3 eulerAngles = rawRotation.eulerAngles;
 
-                    // Set current rotation
-                    if (UnderwaterOrientationSharpness > 0)
-                    {
-                        // Smoothly interpolate from current to target rotation
-                        currentRotation = Quaternion.Slerp(currentRotation, TargetRotation, 1 - Mathf.Exp(-UnderwaterOrientationSharpness * deltaTime)).normalized;
-                    }
-                    else
-                    {
-                        currentRotation = TargetRotation;
+                            // Ajustar euler angles para que el personaje no quede boca arriba
+                            eulerAngles.z = 0;
+                            if (eulerAngles.x > 90 && eulerAngles.x < 270)
+                            {
+                                eulerAngles.y += 180;
+                                eulerAngles.x = 180 - eulerAngles.x;
+                            }
+                            TargetRotation = Quaternion.Euler(eulerAngles);
+                        }
+                        else
+                        {
+                            Vector3 eulerAngles = currentRotation.eulerAngles;
+                            TargetRotation = Quaternion.Euler(0, eulerAngles.y, 0);
+                        }
+
+                        // Set current rotation
+                        if (UnderwaterOrientationSharpness > 0)
+                        {
+                            // Smoothly interpolate from current to target rotation
+                            currentRotation = Quaternion.Slerp(currentRotation, TargetRotation, 1 - Mathf.Exp(-UnderwaterOrientationSharpness * deltaTime)).normalized;
+                        }
+                        else
+                        {
+                            currentRotation = TargetRotation;
+                        }
                     }
                     break;
                 }
@@ -397,7 +399,7 @@ public class KCharacterController : MonoBehaviour, ICharacterController
 
                         Animator.SetBool("isMoving", true);
                     }
-                    else
+                    else if (_canJump)
                     {
                         if (_moveInputVector.sqrMagnitude > 0f)
                         {
