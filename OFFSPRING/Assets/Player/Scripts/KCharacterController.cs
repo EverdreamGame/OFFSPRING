@@ -78,6 +78,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     bool _canJump = true;
     bool _canSprint = true;
 
+    float _lastImpulseTime = 0f;
+
     void Awake()
     {
         // Handle initial state
@@ -385,50 +387,62 @@ public class KCharacterController : MonoBehaviour, ICharacterController
             case CharacterState.Swimming:
                 {
                     // Add move input
-                    if (_moveInputVector.sqrMagnitude > 0f)
+                    if (_jumpRequest)
                     {
-                        Vector3 addedVelocity = deltaTime * UnderwaterAccelerationSpeed * _moveInputVector;
+                        currentVelocity = UnderwaterImpulseSpeed * Motor.CharacterForward;
 
-                        Vector3 currentVelocityOnInputsPlane = Vector3.ProjectOnPlane(currentVelocity, Motor.CharacterRight);
+                        _jumpRequest = false;
+                        _canJump = false;
+                        _lastImpulseTime = Time.time;
 
-                        // Set max speed
-                        float maxSpeed = MaxUnderwaterSpeed;
-                        if (_isSprinting) maxSpeed = MaxUnderwaterSprintSpeed;
-
-                        if (currentVelocityOnInputsPlane.magnitude < maxSpeed)
-                        {
-                            // clamp addedVel to make total vel not exceed max vel on inputs plane
-                            Vector3 newTotal = Vector3.ClampMagnitude(currentVelocityOnInputsPlane + addedVelocity, maxSpeed);
-                            addedVelocity = newTotal - currentVelocityOnInputsPlane;
-                        }
-                        else
-                        {
-                            // Make sure added vel doesn't go in the direction of the already-exceeding velocity
-                            if (Vector3.Dot(currentVelocityOnInputsPlane, addedVelocity) > 0f)
-                            {
-                                addedVelocity = Vector3.ProjectOnPlane(addedVelocity, currentVelocityOnInputsPlane.normalized);
-                            }
-                        }
-
-                        // Apply added velocity
-                        currentVelocity += addedVelocity;
-
-                        // TODO MARC: Cuando haya animaciones y modelo definitivos arreglar esto
-                        // Set capsule direction
-                        //Motor.Capsule.direction = 2; // Z-Direction
-
-                        // Animate
                         Animator.SetBool("isMoving", true);
                     }
                     else
                     {
-                        // Set capsule direction
-                        //Motor.Capsule.direction = 1; // Y-Direction
+                        if (_moveInputVector.sqrMagnitude > 0f)
+                        {
+                            Vector3 addedVelocity = deltaTime * UnderwaterAccelerationSpeed * _moveInputVector;
 
-                        // Animate
-                        Animator.SetBool("isMoving", false);
+                            Vector3 currentVelocityOnInputsPlane = Vector3.ProjectOnPlane(currentVelocity, Motor.CharacterRight);
+
+                            // Set max speed
+                            float maxSpeed = MaxUnderwaterSpeed;
+                            if (_isSprinting) maxSpeed = MaxUnderwaterSprintSpeed;
+
+                            if (currentVelocityOnInputsPlane.magnitude < maxSpeed)
+                            {
+                                // clamp addedVel to make total vel not exceed max vel on inputs plane
+                                Vector3 newTotal = Vector3.ClampMagnitude(currentVelocityOnInputsPlane + addedVelocity, maxSpeed);
+                                addedVelocity = newTotal - currentVelocityOnInputsPlane;
+                            }
+                            else
+                            {
+                                // Make sure added vel doesn't go in the direction of the already-exceeding velocity
+                                if (Vector3.Dot(currentVelocityOnInputsPlane, addedVelocity) > 0f)
+                                {
+                                    addedVelocity = Vector3.ProjectOnPlane(addedVelocity, currentVelocityOnInputsPlane.normalized);
+                                }
+                            }
+
+                            // Apply added velocity
+                            currentVelocity += addedVelocity;
+
+                            // TODO MARC: Cuando haya animaciones y modelo definitivos arreglar esto
+                            // Set capsule direction
+                            //Motor.Capsule.direction = 2; // Z-Direction
+
+                            // Animate
+                            Animator.SetBool("isMoving", true);
+                        }
+                        else
+                        {
+                            // Set capsule direction
+                            //Motor.Capsule.direction = 1; // Y-Direction
+
+                            // Animate
+                            Animator.SetBool("isMoving", false);
+                        }
                     }
-
                     // Drag
                     currentVelocity *= (1f / (1f + (UnderwaterDrag * deltaTime)));
 
@@ -459,6 +473,15 @@ public class KCharacterController : MonoBehaviour, ICharacterController
         {
             case CharacterState.Default:
                 {
+                    break;
+                }
+            case CharacterState.Swimming:
+                {
+                    if (!_canJump && Time.time > _lastImpulseTime + UnderwaterImpulseCooldown)
+                    {
+                        _canJump = true;
+                    }
+
                     break;
                 }
         }
