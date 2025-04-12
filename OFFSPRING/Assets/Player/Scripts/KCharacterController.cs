@@ -31,6 +31,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
 
     public CharacterState CurrentCharacterState;
 
+    // TODO MARC: Poner eventos para acciones (OnPlayerStun...)
+
     [Space]
     [Header("Stable Movement")]
     public float MaxStableMoveSpeed = 10f;
@@ -52,7 +54,12 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     public float UnderwaterAccelerationSpeed = 15f;
     public float UnderwaterDrag = 1f;
     public float UnderwaterOrientationSharpness = 5f;
-    public float UnderwaterImpulseCooldown = 1f;
+    public float UnderwaterImpulseCooldown = 0.5f;
+
+    [Space]
+    [Header("Stun Player")]
+    public float DefaultStunTime = 0.6f;
+    // TODO MARC: ir rellenando con atributos
 
     [Space]
     [Header("Joints & Constrains")]
@@ -65,20 +72,24 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     public float BonusOrientationSharpness = 10f;
     public Vector3 Gravity = new Vector3(0, -30f, 0);
 
-    // Private fields
+    // Private fields -------------------------------------------------
     Vector3 _moveInputVector = Vector3.zero;
     Vector3 _lookInputVector = Vector3.zero;
     Vector3 _internalVelocityAdd = Vector3.zero;
     Vector3 _targetVelocity = Vector3.zero;
+    Vector3 _movementDirection = Vector3.zero;
     Quaternion _targetRotation = Quaternion.identity;
     bool _setRotationRequest = false;
     bool _setVelocityRequest = false;
     bool _jumpRequest = false;
-    bool _isSprinting = false;
     bool _canJump = true;
     bool _canSprint = true;
 
+    bool _isSprinting = false;
+    bool _isStunned = false;
+
     float _lastImpulseTime = 0f;
+    float _lastStunTime = 0f;
 
     void Awake()
     {
@@ -200,7 +211,9 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     // ========================================== UPDATE ==========================================
     public void BeforeCharacterUpdate(float deltaTime)
     {
+
     }
+
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
     {
         if (_setRotationRequest)
@@ -209,6 +222,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
             _setRotationRequest = false;
             return;
         }
+
+        if (_isStunned) return;
 
         switch (CurrentCharacterState)
         {
@@ -257,12 +272,12 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                 }
             case CharacterState.Swimming:
                 {
-                    // TODO MARC SPRINT 2: Hacer que el personaje rote segun el plano perpendicular a la dirección planar de la camara.
-                    
+                    // TODO MARC: Hacer esto más limpio
+
+                    Quaternion TargetRotation;
                     // Get target rotation
                     if (_canJump) // Si se está impulsando, no gira ni se puede cambiar de dirección
                     {
-                        Quaternion TargetRotation;
                         if (_lookInputVector.sqrMagnitude > 0f)
                         {
                             Quaternion rawRotation = Quaternion.LookRotation(_lookInputVector, Motor.CharacterUp);
@@ -279,24 +294,42 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                         }
                         else
                         {
+                            // TODO MARC: Hacer esto relativo a la rotación de la cámara
+
                             Vector3 eulerAngles = currentRotation.eulerAngles;
                             TargetRotation = Quaternion.Euler(0, eulerAngles.y, 0);
                         }
+                    }
+                    else
+                    {
+                        Quaternion rawRotation = Quaternion.LookRotation(_movementDirection, Motor.CharacterUp);
+                        Vector3 eulerAngles = rawRotation.eulerAngles;
 
-                        // Set current rotation
-                        if (UnderwaterOrientationSharpness > 0)
+                        // Ajustar euler angles para que el personaje no quede boca arriba
+                        eulerAngles.z = 0;
+                        if (eulerAngles.x > 90 && eulerAngles.x < 270)
                         {
-                            // Smoothly interpolate from current to target rotation
-                            currentRotation = Quaternion.Slerp(currentRotation, TargetRotation, 1 - Mathf.Exp(-UnderwaterOrientationSharpness * deltaTime)).normalized;
+                            eulerAngles.y += 180;
+                            eulerAngles.x = 180 - eulerAngles.x;
                         }
-                        else
-                        {
-                            currentRotation = TargetRotation;
-                        }
+                        TargetRotation = Quaternion.Euler(eulerAngles);
+                    }
+
+                    // Set current rotation
+                    if (UnderwaterOrientationSharpness > 0)
+                    {
+                        // Smoothly interpolate from current to target rotation
+                        currentRotation = Quaternion.Slerp(currentRotation, TargetRotation, 1 - Mathf.Exp(-UnderwaterOrientationSharpness * deltaTime)).normalized;
+                    }
+                    else
+                    {
+                        currentRotation = TargetRotation;
                     }
                     break;
                 }
+
         }
+
     }
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
     {
@@ -306,6 +339,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
             _setVelocityRequest = false;
             return;
         }
+
+        if (_isStunned) return;
 
         // Manage character state
         switch (CurrentCharacterState)
@@ -391,13 +426,20 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     // Add move input
                     if (_jumpRequest)
                     {
-                        currentVelocity = UnderwaterImpulseSpeed * Motor.CharacterForward;
+                        if (_moveInputVector.sqrMagnitude > 0f)
+                        {
+                            currentVelocity = UnderwaterImpulseSpeed * _moveInputVector;
 
-                        _jumpRequest = false;
-                        _canJump = false;
-                        _lastImpulseTime = Time.time;
+                            _jumpRequest = false;
+                            _canJump = false;
+                            _lastImpulseTime = Time.time;
 
-                        Animator.SetBool("isMoving", true);
+                            Animator.SetBool("isMoving", true);
+                        }
+                        else
+                        {
+                            _jumpRequest = false;
+                        }
                     }
                     else if (_canJump)
                     {
@@ -468,9 +510,14 @@ public class KCharacterController : MonoBehaviour, ICharacterController
 
             //currentVelocity = currentVelocity.normalized * interaction.GetMaximumSpeedToReachTheExtendedPosition(currentVelocity.normalized, currentVelocity.magnitude);
         }
+
+        // Set velocity direction
+        _movementDirection = currentVelocity.normalized;
     }
     public void AfterCharacterUpdate(float deltaTime)
     {
+        Debug.DrawLine(transform.position, transform.position + _movementDirection * 3f, Color.green);
+
         switch (CurrentCharacterState)
         {
             case CharacterState.Default:
@@ -483,9 +530,14 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     {
                         _canJump = true;
                     }
-
                     break;
                 }
+        }
+
+        // Handle stun
+        if (_isStunned && Time.time > _lastStunTime + DefaultStunTime)
+        {
+            _isStunned = false;
         }
     }
 
@@ -560,8 +612,34 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     // ========================================== MOVEMENT HIT ==========================================
     public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
     {
+        switch (CurrentCharacterState)
+        {
+            case CharacterState.Default:
+                {
+                    break;
+                }
+            case CharacterState.Swimming:
+                {
+                    // Si se choca cuando esta impulsandose stunea al player y lo hace rebotar
+                    if (!_isStunned && !_canJump)
+                    {
+                        StunPlayer();
+                        SetVelocity(-(hitPoint - transform.position).normalized * 3f);
+                    }
+                    break;
+                }
+        }
     }
     public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport)
     {
+    }
+
+    // ========================================== OTHER STUFF ===========================================
+    public void StunPlayer()
+    {
+        _isStunned = true;
+        _lastStunTime = Time.time;
+
+        PlayerManager.CameraController.TriggerCameraShake(magnitude: 0.1f, controllerVibration: false);
     }
 }

@@ -163,10 +163,11 @@ MonoBehaviour:
   MaxUnderwaterSpeed: 3
   MaxUnderwaterSprintSpeed: 10
   UnderwaterImpulseSpeed: 22
-  UnderwaterAccelerationSpeed: 15
+  UnderwaterAccelerationSpeed: 10
   UnderwaterDrag: 1
   UnderwaterOrientationSharpness: 5
-  UnderwaterImpulseCooldown: 1
+  UnderwaterImpulseCooldown: 0.5
+  DefaultStunTime: 1
   IgnoredColliders: []
   BonusOrientationMethod: 0
   BonusOrientationSharpness: 10
