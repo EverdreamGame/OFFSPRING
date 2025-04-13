@@ -6,7 +6,6 @@ public class PlayerInteractionScript : MonoBehaviour
     public float interactionRadius;
     [Space]
     public ParentInteractionScript currentObjectInteraction;
-    private Player player;
 
     [Space]
     private bool canInteract;
@@ -15,7 +14,6 @@ public class PlayerInteractionScript : MonoBehaviour
 
     private void Start()
     {
-        player = Player.Instance;
         canInteract = false;
 
         interactedCollider = new Collider[1];
