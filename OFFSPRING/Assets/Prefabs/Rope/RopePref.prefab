@@ -153,13 +153,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nodePrefab: {fileID: 8107770096615882824, guid: 6701c86b753ce6c458f2d3566d870194, type: 3}
-  nodeDistance: 0.1
-  totalNodes: 150
+  nodeDistance: 0.15
+  totalNodes: 100
   ropeWidth: 0.5
   startAttachment: {fileID: 0}
   endAttachment: {fileID: 0}
   gravity: {x: 0, y: 0, z: 0}
-  damping: 0.95
+  damping: 0.98
   sleepThreshold: 0
   collisionMask:
     serializedVersion: 2
@@ -169,4 +169,4 @@ MonoBehaviour:
   solverIterations: 1
   nodes: []
   ropeLength: 0
-  angleTolerance: 2
+  angleTolerance: 10

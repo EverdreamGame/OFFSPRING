@@ -159,8 +159,6 @@ MonoBehaviour:
   parent: {fileID: 5048424725648720855}
   cylinder:
   - {fileID: 5619357636089211078}
-  - {fileID: 0}
-  - {fileID: 0}
   movingAxis: {x: 0, y: 1, z: 0}
   offsetFromPlayer: -0.5
 --- !u!1 &8668789828876149348
@@ -175,6 +173,7 @@ GameObject:
   - component: {fileID: 6409010894020760971}
   - component: {fileID: 222650712152270767}
   - component: {fileID: 7213961129708233772}
+  - component: {fileID: 3355903388764543456}
   - component: {fileID: 5619357636089211078}
   m_Layer: 2
   m_Name: Cylinder
@@ -272,6 +271,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!208 &3355903388764543456
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8668789828876149348}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!114 &5619357636089211078
 MonoBehaviour:
   m_ObjectHideFlags: 0

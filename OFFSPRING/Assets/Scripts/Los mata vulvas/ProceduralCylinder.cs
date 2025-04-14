@@ -1,6 +1,8 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(BoxCollider))]
+[RequireComponent(typeof(NavMeshObstacle))]
 public class ProceduralCylinder : MonoBehaviour
 {
     [Header("Cylinder Settings")]
@@ -28,12 +30,15 @@ public class ProceduralCylinder : MonoBehaviour
     [Space]
     public bool hasReachedObstacle;
     private BoxCollider boxCollider;
+    private NavMeshObstacle navMeshObstacle;
 
     private void Start()
     {
         hasReachedObstacle = false;
         boxCollider = GetComponent<BoxCollider>();
-
+        navMeshObstacle = GetComponent<NavMeshObstacle>();
+        navMeshObstacle.carving = true;
+        
         int heightSegments = Mathf.Max(1, Mathf.RoundToInt(height / segmentHeight));
 
         GenerateCylinder(radialSegments, heightSegments, radius, height);
@@ -143,11 +148,10 @@ public class ProceduralCylinder : MonoBehaviour
         mesh.triangles = triangles;
         mesh.RecalculateBounds();
 
-        if (boxCollider != null)
         {
             Bounds bounds = mesh.bounds;
-            boxCollider.center = bounds.center;
-            boxCollider.size = bounds.size;
+            boxCollider.center = navMeshObstacle.center = bounds.center;
+            boxCollider.size = navMeshObstacle.size = bounds.size;
         }
     }
 }
