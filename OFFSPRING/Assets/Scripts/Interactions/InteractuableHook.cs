@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 public class InteractuableHook : ParentInteractionScript
 {
     public float maxDistanceAvailable;
@@ -48,27 +48,43 @@ public class InteractuableHook : ParentInteractionScript
         Vector3 clampedOffset = movingAxis.normalized * clampedDistance;
 
         // Final position with offset from player
-        transform.position = parent.position + clampedOffset + (clampedOffset.normalized * offsetFromPlayer);
+        transform.DOMove(parent.position + clampedOffset + (clampedOffset.normalized * offsetFromPlayer), .1f);
 
         distanceBetweenStartToCurrent = clampedOffset.magnitude;
 
         foreach (var item in cylinder)
         {
-            item.UpdateMeshIfNeeded(distanceBetweenStartToCurrent + offsetFromPlayer, maxDistanceAvailable);
+            item.UpdateMeshIfNeeded(distanceBetweenStartToCurrent, maxDistanceAvailable);
         }
     }
 
     public override bool CheckNextPlayerPositionAvailability(Vector3 direction, float speed)
     {
-        float alignment = Vector3.Dot(direction.normalized, movingAxis);
-        if (Mathf.Abs(alignment) < 0.8f)
+        Vector3 directionNormalized = direction.normalized;
+
+        // Must be aligned with movement axis
+        float axisAlignment = Vector3.Dot(directionNormalized, movingAxis);
+        if (Mathf.Abs(axisAlignment) < 0.8f) // (1 = perfect alignment, 0 = perpendicular)
             return false;
 
-        Vector3 futurePlayerPosition = player.transform.position + direction.normalized * speed;
+        // Must be roughly pointing toward the hook
+        Vector3 toHook = (transform.position - player.transform.position).normalized;
+        float facingHook = Vector3.Dot(directionNormalized, toHook);
+        if (facingHook > 0.3f) // (1 = perfect alignment, 0 = perpendicular)
+            return true;
+
+        // Predict future player position
+        Vector3 futurePlayerPosition = player.transform.position + directionNormalized * speed;
         Vector3 futureOffset = futurePlayerPosition - parent.position;
         Vector3 projectedOffset = Vector3.Dot(futureOffset, movingAxis) * movingAxis;
 
         float futureDistance = projectedOffset.magnitude;
+
+        foreach (var item in cylinder)
+        {
+            if (item.hasReachedObstacle)
+                return false;
+        }
 
         return futureDistance >= minDistance && futureDistance <= maxDistanceAvailable;
     }

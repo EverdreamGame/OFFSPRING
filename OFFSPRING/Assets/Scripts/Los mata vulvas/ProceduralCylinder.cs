@@ -22,8 +22,16 @@ public class ProceduralCylinder : MonoBehaviour
     [Space]
     public bool isSameDirection;
 
+    public delegate void ChangeOfDimensions(float height);
+    public ChangeOfDimensions changeOfDimensionsDelegate;
+
+    [Space]
+    public bool hasReachedObstacle;
+
     private void Start()
     {
+        hasReachedObstacle = false;
+        
         int heightSegments = Mathf.Max(1, Mathf.RoundToInt(height / segmentHeight));
 
         GenerateCylinder(radialSegments, heightSegments, radius, height);
@@ -36,19 +44,21 @@ public class ProceduralCylinder : MonoBehaviour
     public void UpdateMeshIfNeeded(float height, float maxHeight)
     {
         this.height = isSameDirection ? height : maxHeight - height;
-        int heightSegments = Mathf.Max(1, Mathf.RoundToInt(height / segmentHeight));
+        int heightSegments = Mathf.Max(1, Mathf.RoundToInt(this.height / segmentHeight));
 
         // Only regenerate if values have changed
         if (mesh == null ||
             radialSegments != lastRadialSegments ||
             heightSegments != lastHeightSegments ||
-            height != lastHeight ||
+            this.height != lastHeight ||
             radius != lastRadius)
         {
-            GenerateCylinder(radialSegments, heightSegments, radius, height);
+            changeOfDimensionsDelegate?.Invoke(this.height);
+
+            GenerateCylinder(radialSegments, heightSegments, radius, this.height);
             lastRadialSegments = radialSegments;
             lastHeightSegments = heightSegments;
-            lastHeight = height;
+            lastHeight = this.height;
             lastRadius = radius;
         }
     }

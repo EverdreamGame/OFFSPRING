@@ -50,45 +50,35 @@ public class Rope : MonoBehaviour
         // Enforce fixed length between attachments
         if (IsRopeMaxExtent())
         {
-            // Calculate the direction from each attachment to the next node
-            Vector3 startToNext = nodes[1].Position - startAttachment.position;
-            Vector3 endToPrev = nodes[nodes.Count - 2].Position - endAttachment.position;
+            Vector3 startToNext = startAttachment != null ? nodes[1].Position - startAttachment.position : Vector3.zero;
+            Vector3 endToPrev = endAttachment != null ? nodes[nodes.Count - 2].Position - endAttachment.position : Vector3.zero;
 
-            // Only apply correction if we have valid directions (avoid division by zero)
-            if (startToNext.sqrMagnitude > 0.001f && endToPrev.sqrMagnitude > 0.001f)
+            if (startAttachment != null && startToNext.sqrMagnitude > 0.001f)
             {
                 Vector3 startDirection = startToNext.normalized;
-                Vector3 endDirection = endToPrev.normalized;
-
-                float distanceToCorrect = CalculateActualRopeLength() - ropeLength;
-
-                // Calculate correction amounts (distribute between both ends)
-                float startCorrection = distanceToCorrect * 0.5f;
-                float endCorrection = distanceToCorrect * 0.5f;
-
-                // Calculate new positions
+                float startCorrection = (CalculateActualRopeLength() - ropeLength) * 0.5f;
                 Vector3 newStartPos = startAttachment.position + startDirection * startCorrection;
-                Vector3 newEndPos = endAttachment.position + endDirection * endCorrection;
 
-                // Verify the new positions don't overshoot the nodes
                 if (Vector3.Dot(newStartPos - nodes[1].Position, startDirection) > 0)
                     newStartPos = nodes[1].Position - startDirection * 0.01f;
+
+                Rigidbody startRb = startAttachment.GetComponent<Rigidbody>();
+                if (startRb == null || !startRb.isKinematic)
+                    startAttachment.position = newStartPos;
+            }
+
+            if (endAttachment != null && endToPrev.sqrMagnitude > 0.001f)
+            {
+                Vector3 endDirection = endToPrev.normalized;
+                float endCorrection = (CalculateActualRopeLength() - ropeLength) * 0.5f;
+                Vector3 newEndPos = endAttachment.position + endDirection * endCorrection;
 
                 if (Vector3.Dot(newEndPos - nodes[nodes.Count - 2].Position, endDirection) > 0)
                     newEndPos = nodes[nodes.Count - 2].Position - endDirection * 0.01f;
 
-                // Move attachments if they're not kinematic
-                Rigidbody startRb = startAttachment.GetComponent<Rigidbody>();
-                if (startRb == null || !startRb.isKinematic)
-                {
-                    startAttachment.position = newStartPos;
-                }
-
                 Rigidbody endRb = endAttachment.GetComponent<Rigidbody>();
                 if (endRb == null || !endRb.isKinematic)
-                {
                     endAttachment.position = newEndPos;
-                }
             }
         }
 
@@ -133,11 +123,9 @@ public class Rope : MonoBehaviour
         if (nodes.Count < 2 || (startAttachment == null && endAttachment == null))
             return false;
 
-        // Check that all non-colliding segments form straight lines
         if (!NonCollidingNodesAreStraight())
             return false;
 
-        // Check rope is at full extension
         float actualLength = CalculateActualRopeLength();
         return actualLength >= RestLength - (nodeDistance * 0.5f);
     }
@@ -326,11 +314,14 @@ public class Rope : MonoBehaviour
     }
 
     void OnDrawGizmos()
-    {    
+    {
+        if (nodes == null || nodes.Count < 2)
+            return;
+
         Gizmos.color = IsRopeMaxExtent() ? Color.red : Color.green;
         for (int i = 0; i < nodes.Count - 1; i++)
         {
-            Gizmos.DrawLine(nodes[i].Position, nodes[i+1].Position);
+            Gizmos.DrawLine(nodes[i].Position, nodes[i + 1].Position);
         }
     }
 }

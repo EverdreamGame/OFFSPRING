@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader Graphs_MovingMeatShaderGraph
+  m_Name: Horizontal_MovingMeatShaderGraph
   m_Shader: {fileID: -6465566751694194690, guid: 6a331ff52656649498e0e808c3ed6ee4, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -75,6 +75,7 @@ Material:
     - _RefractionModel: 0
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
+    - _RotationAngle: 0
     - _SrcBlend: 1
     - _StencilRef: 0
     - _StencilRefDepth: 8
