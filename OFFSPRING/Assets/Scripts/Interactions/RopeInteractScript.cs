@@ -8,6 +8,9 @@ public class RopeInteractScript : ParentInteractionScript
     Rope ropeReference;
     bool isStartRope;
 
+    public delegate void RopeInteractionDelegate();
+    public RopeInteractionDelegate startRopeInteractionDelegate;
+
     private void Start()
     {
         //Cambiar la layer del objeto
@@ -29,19 +32,51 @@ public class RopeInteractScript : ParentInteractionScript
     public override void StartInteraction(Transform playerTrans)
     {
         //TODO -> si el enemigo está vivo, todavía no es interactuable
+        startRopeInteractionDelegate?.Invoke();
 
         if (isStartRope)
             ropeReference.startAttachment = playerTrans;
         else
             ropeReference.endAttachment = playerTrans;
     }
-
+    [Space]
+    public float distanceToCheckNearLock = 1.5f;
     public override void EndInteraction()
     {
         if (isStartRope)
+        {
+            //Comprueba si hay un lock cerca
+            if (IsNearLock(distanceToCheckNearLock))
+            {
+                LockScript myLock = GetNearLock(distanceToCheckNearLock);
+
+                if (myLock.transform != ropeReference.startAttachment)
+                {
+                    myLock.StartInteraction(this);
+                    ropeReference.startAttachment = myLock.transform;
+                    return;
+                }
+            }
+            //Si no hay, attatch es null
             ropeReference.startAttachment = null;
+        }
         else
+        {
+            //Comprueba si hay un lock cerca
+            if (IsNearLock(distanceToCheckNearLock))
+            {
+                LockScript myLock = GetNearLock(distanceToCheckNearLock);
+
+                if (myLock.transform != ropeReference.endAttachment)
+                {
+                    myLock.StartInteraction(this);
+                    ropeReference.endAttachment = myLock.transform;
+                    return;
+                }
+            }
+            //Si no hay, attatch es null
             ropeReference.endAttachment = null;
+        }
     }
 
     public override bool CheckNextPlayerPositionAvailability(Vector3 direction, float speed)
@@ -102,6 +137,32 @@ public class RopeInteractScript : ParentInteractionScript
         return angleToPoint <= (coneAngleInDegrees * 0.5f);
     }
 
+    public bool IsNearLock(float radius)
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, radius);
+
+        foreach (var hit in hits)
+        {
+            if (hit.GetComponent<LockScript>() != null)
+                return true;
+        }
+
+        return false;
+    }
+
+    public LockScript GetNearLock(float radius)
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, radius);
+
+        foreach (var hit in hits)
+        {
+            if (hit.GetComponent<LockScript>() != null)
+                return hit.GetComponent<LockScript>();
+        }
+
+        return null;
+    }
+
     private void OnDrawGizmos()
     {
         Vector3 currentRopeDirection = currentRopeNode.Position - previousRopeNode.Position;
@@ -124,5 +185,8 @@ public class RopeInteractScript : ParentInteractionScript
         Gizmos.color = Color.red;
         Gizmos.DrawRay(currentRopeNode.Position, leftDirection * 5);
         Gizmos.DrawRay(currentRopeNode.Position, rightDirection * 5);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, distanceToCheckNearLock);
     }
 }

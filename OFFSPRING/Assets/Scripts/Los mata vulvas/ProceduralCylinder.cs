@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(BoxCollider))]
 public class ProceduralCylinder : MonoBehaviour
 {
     [Header("Cylinder Settings")]
@@ -27,11 +27,13 @@ public class ProceduralCylinder : MonoBehaviour
 
     [Space]
     public bool hasReachedObstacle;
+    private BoxCollider boxCollider;
 
     private void Start()
     {
         hasReachedObstacle = false;
-        
+        boxCollider = GetComponent<BoxCollider>();
+
         int heightSegments = Mathf.Max(1, Mathf.RoundToInt(height / segmentHeight));
 
         GenerateCylinder(radialSegments, heightSegments, radius, height);
@@ -109,7 +111,8 @@ public class ProceduralCylinder : MonoBehaviour
                 int index = y * (radialSegments + 1) + i;
                 vertices[index] = new Vector3(x, yPos, z);
                 normals[index] = new Vector3(x, 0f, z).normalized;
-                uv[index] = new Vector2(u, v);
+                float circumference = 2f * Mathf.PI * radius;
+                uv[index] = new Vector2(u * circumference, v * height);
             }
         }
 
@@ -139,5 +142,12 @@ public class ProceduralCylinder : MonoBehaviour
         mesh.uv = uv;
         mesh.triangles = triangles;
         mesh.RecalculateBounds();
+
+        if (boxCollider != null)
+        {
+            Bounds bounds = mesh.bounds;
+            boxCollider.center = bounds.center;
+            boxCollider.size = bounds.size;
+        }
     }
 }

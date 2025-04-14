@@ -53,7 +53,7 @@ public class Rope : MonoBehaviour
             Vector3 startToNext = startAttachment != null ? nodes[1].Position - startAttachment.position : Vector3.zero;
             Vector3 endToPrev = endAttachment != null ? nodes[nodes.Count - 2].Position - endAttachment.position : Vector3.zero;
 
-            if (startAttachment != null && startToNext.sqrMagnitude > 0.001f)
+            if (startAttachment != null && endAttachment != null && startToNext.sqrMagnitude > 0.001f)
             {
                 Vector3 startDirection = startToNext.normalized;
                 float startCorrection = (CalculateActualRopeLength() - ropeLength) * 0.5f;
@@ -67,7 +67,7 @@ public class Rope : MonoBehaviour
                     startAttachment.position = newStartPos;
             }
 
-            if (endAttachment != null && endToPrev.sqrMagnitude > 0.001f)
+            if (endAttachment != null && startAttachment != null && endToPrev.sqrMagnitude > 0.001f)
             {
                 Vector3 endDirection = endToPrev.normalized;
                 float endCorrection = (CalculateActualRopeLength() - ropeLength) * 0.5f;
