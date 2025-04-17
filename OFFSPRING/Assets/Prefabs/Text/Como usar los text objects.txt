@@ -1,0 +1,10 @@
+*Puedes ver todos los textos en la escena en Tools->TextManager
+
+Para añadir textos en la escena:
+
+Arrastra el prefab "TextObject" a la escena. 
+Este prefab tiene 2 objetos, el texto y el trigger.
+Puedes editar el texto en el mismo objeto o desde el TextManager.
+Mueve y modifica la colisión del trigger si lo necesitas.
+
+*Si quieres que el texto se adapte a una mesh, añadir componente Text Mesh Surface Projector y tocar valores. Puedes ver ejemplos en la escena Text Test
