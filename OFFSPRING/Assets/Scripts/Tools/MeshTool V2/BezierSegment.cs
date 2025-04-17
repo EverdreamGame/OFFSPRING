@@ -18,8 +18,8 @@ public class BezierSegment
         control2 = c2;
         anchor2 = a2;
 
-        width1 = 0.5f;
-        width2 = 0.5f;
+        width1 = 1f;
+        width2 = 1f;
     }
 
     public Vector3 GetPoint(float t)
