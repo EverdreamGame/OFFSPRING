@@ -17,18 +17,9 @@ public class TextAnimations : MonoBehaviour
         tmp.maxVisibleCharacters = 0;
     }
 
-    //public void ShowTextLetterByLetter()
-    //{
-    //    tmp.text = fullText; // En caso de que haya sido modificado
-    //    tmp.ForceMeshUpdate();
-
-    //    tmp.maxVisibleCharacters = 0;
-    //    StartCoroutine(RevealLetters());
-    //}
-
-    public void ShowTextLetterByLetter(string text)
+    public void ShowTextLetterByLetter()
     {
-        tmp.text = text; // En caso de que haya sido modificado
+        tmp.text = fullText; // En caso de que haya sido modificado
         tmp.ForceMeshUpdate();
 
         tmp.maxVisibleCharacters = 0;
