@@ -8,12 +8,18 @@ public class BezierSegment
     public Vector3 control2;
     public Vector3 anchor2;
 
-    public BezierSegment(Vector3 anchor1, Vector3 control1, Vector3 control2, Vector3 anchor2)
+    public float width1 = 0.5f;
+    public float width2 = 0.5f;
+
+    public BezierSegment(Vector3 a1, Vector3 c1, Vector3 c2, Vector3 a2)
     {
-        this.anchor1 = anchor1;
-        this.control1 = control1;
-        this.control2 = control2;
-        this.anchor2 = anchor2;
+        anchor1 = a1;
+        control1 = c1;
+        control2 = c2;
+        anchor2 = a2;
+
+        width1 = 0.5f;
+        width2 = 0.5f;
     }
 
     public Vector3 GetPoint(float t)
@@ -31,5 +37,10 @@ public class BezierSegment
         return 3 * u * u * (control1 - anchor1) +
                6 * u * t * (control2 - control1) +
                3 * t * t * (anchor2 - control2);
+    }
+
+    public float GetWidth(float t)
+    {
+        return Mathf.Lerp(width1, width2, t);
     }
 }

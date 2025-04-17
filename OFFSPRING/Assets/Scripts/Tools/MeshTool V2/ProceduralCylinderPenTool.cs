@@ -55,6 +55,7 @@ public class ProceduralCylinderPenTool : MonoBehaviour
 
         List<Vector3> pathPoints = new List<Vector3>();
         List<Vector3> pathTangents = new List<Vector3>();
+        List<float> pathRadii = new List<float>();
 
         foreach (var segment in bezierPath.segments)
         {
@@ -63,13 +64,14 @@ public class ProceduralCylinderPenTool : MonoBehaviour
                 float t = (float)i / pathResolution;
                 pathPoints.Add(segment.GetPoint(t));
                 pathTangents.Add(segment.GetTangent(t).normalized);
+                pathRadii.Add(segment.GetWidth(t));
             }
         }
 
-        GenerateTubeMesh(pathPoints, pathTangents);
+        GenerateTubeMesh(pathPoints, pathTangents, pathRadii);
     }
 
-    private void GenerateTubeMesh(List<Vector3> centers, List<Vector3> tangents)
+    private void GenerateTubeMesh(List<Vector3> centers, List<Vector3> tangents, List<float> radii)
     {
         int ringCount = centers.Count;
         int vertexCount = ringCount * (radialSegments + 1);
@@ -92,6 +94,17 @@ public class ProceduralCylinderPenTool : MonoBehaviour
         uv = new Vector2[vertexCount];
         triangles = new int[triangleCount];
 
+        float[] curveLengths = new float[ringCount];
+        float totalLength = 0f;
+        curveLengths[0] = 0f;
+
+        for (int i = 1; i < ringCount; i++)
+        {
+            float dist = Vector3.Distance(centers[i - 1], centers[i]);
+            totalLength += dist;
+            curveLengths[i] = totalLength;
+        }
+
         for (int i = 0; i < ringCount; i++)
         {
             Vector3 forward = tangents[i];
@@ -107,12 +120,17 @@ public class ProceduralCylinderPenTool : MonoBehaviour
             {
                 float angle = (float)j / radialSegments * Mathf.PI * 2f;
                 Vector3 radialDir = Mathf.Cos(angle) * side + Mathf.Sin(angle) * normal;
-                Vector3 vertex = centers[i] + radialDir * radius;
+                float ringRadius = radii[i];
+                Vector3 vertex = centers[i] + radialDir * ringRadius;
 
                 int index = i * (radialSegments + 1) + j;
                 vertices[index] = vertex;
                 normals[index] = radialDir;
-                uv[index] = new Vector2((float)j / radialSegments, (float)i / (ringCount - 1));
+
+                float u = (float)j / radialSegments;
+                float v = curveLengths[i] / totalLength; 
+
+                uv[index] = new Vector2(u, v); 
             }
         }
 

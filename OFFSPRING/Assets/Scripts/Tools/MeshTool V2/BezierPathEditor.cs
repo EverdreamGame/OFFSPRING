@@ -41,6 +41,17 @@ public class BezierPathEditor : Editor
 
             Handles.color = Color.white;
             Handles.DrawBezier(a1, a2, c1, c2, Color.white, null, 2f);
+
+            Handles.color = Color.yellow;
+            float newWidth1 = Handles.ScaleSlider(seg.width1, seg.anchor1, Vector3.right, Quaternion.identity, seg.width1, 0.1f);
+            float newWidth2 = Handles.ScaleSlider(seg.width2, seg.anchor2, Vector3.right, Quaternion.identity, seg.width2, 0.1f);
+
+            if (newWidth1 != seg.width1 || newWidth2 != seg.width2)
+            {
+                Undo.RecordObject(path, "Change Width");
+                seg.width1 = newWidth1;
+                seg.width2 = newWidth2;
+            }
         }
     }
 
