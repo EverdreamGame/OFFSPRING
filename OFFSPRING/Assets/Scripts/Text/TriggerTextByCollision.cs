@@ -5,9 +5,9 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Collider))]
 public class TriggerTextByCollision : MonoBehaviour
 {
-    //[Tooltip("Evento que se ejecuta al entrar en el trigger")]
+    //[Tooltip("Eventos adicionales que se ejecutan al entrar en el trigger")]
     //public UnityEvent onTriggerEnter;
-    
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
