@@ -4,6 +4,7 @@ Para añadir textos en la escena:
 
 Arrastra el prefab "TextObject" a la escena. 
 Este prefab tiene 2 objetos, el texto y el trigger.
+Puedes editar el transform de éstos como desees.
 Puedes editar el texto en el mismo objeto o desde el TextManager.
 Mueve y modifica la colisión del trigger si lo necesitas.
 
