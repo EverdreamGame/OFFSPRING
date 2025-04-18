@@ -53,7 +53,7 @@ MonoBehaviour:
   surfaceType: 0
   geometryType: 3
   meshRenderers: []
-  timeMultiplier: 1
+  timeMultiplier: 0
   scriptInteractions: 0
   cpuEvaluateRipples: 0
   customMaterial: {fileID: 0}
@@ -65,10 +65,10 @@ MonoBehaviour:
   maxTessellationFactor: 0
   tessellationFactorFadeStart: 150
   tessellationFactorFadeRange: 1850
-  refractionColor: {r: 0.65626645, g: 0.074391894, b: 0.055970002, a: 1}
+  refractionColor: {r: 0.14369383, g: 0, b: 0.0022448015, a: 1}
   maxRefractionDistance: 0
   absorptionDistance: 50
-  scatteringColor: {r: 0.32296914, g: 0.0128248595, b: 0.020806711, a: 1}
+  scatteringColor: {r: 0.43203577, g: 0.0065012304, b: 0.0057784845, a: 1}
   ambientScattering: 0
   heightScattering: 0
   displacementScattering: 0.1
@@ -80,7 +80,7 @@ MonoBehaviour:
   causticsPlaneBlendDistance: 1
   causticsResolution: 256
   causticsBand: 2
-  virtualPlaneDistance: 4
+  virtualPlaneDistance: 4.56
   causticsTilingFactor: 1
   causticsDirectionalShadow: 0
   causticsDirectionalShadowDimmer: 0.25
@@ -95,7 +95,7 @@ MonoBehaviour:
   volumeDepth: 1000
   volumeHeight: 0
   volumePrority: 0
-  absorptionDistanceMultiplier: 0.75
+  absorptionDistanceMultiplier: 5
   underWaterAmbientProbeContribution: 1
   underWaterScatteringColorMode: 0
   underWaterScatteringColor: {r: 0, g: 0.27, b: 0.23, a: 1}
