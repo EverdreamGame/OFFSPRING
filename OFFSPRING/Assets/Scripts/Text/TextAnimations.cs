@@ -6,6 +6,7 @@ using DG.Tweening;
 public class TextAnimations : MonoBehaviour
 {
     public float delayBetweenLetters = 0.05f;
+    public float delayBeforeDestroy = 2f;
     private TextMeshPro tmp;
     private string fullText;
 
@@ -64,5 +65,12 @@ public class TextAnimations : MonoBehaviour
 
             yield return new WaitForSeconds(delayBetweenLetters);
         }
+        // Tween al alpha 0
+        Color color = tmp.color;
+        color.a = 0f;
+        tmp.DOColor(color, delayBeforeDestroy);
+
+        yield return new WaitForSeconds(delayBeforeDestroy);
+        Destroy(transform.parent.gameObject);
     }
 }
