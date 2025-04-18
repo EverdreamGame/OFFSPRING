@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4334574039481263786
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5465958166785314556}
+  - component: {fileID: 2901748177747295043}
+  m_Layer: 0
+  m_Name: FloatingTextManagerPref
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5465958166785314556
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4334574039481263786}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2901748177747295043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4334574039481263786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 963c00ac70b171e4280596ce157beccf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleTexts:
+  - text: Holaa holaa caracola
+    weight: 0
+  floatingTextPrefab: {fileID: 8493030225421090460, guid: 3fce250889b76cb4dafe55ed0a41560c, type: 3}
+  font: {fileID: 11400000, guid: ec531cdeb42b03847a0e1b78573a7630, type: 2}
+  fontSize: 5
+  minRadius: 1
+  maxRadius: 2
+  minArcAngle: 45
+  maxArcAngle: 90
+  fadeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.1482901
+      value: 0.9874802
+      inSlope: -0.0225801
+      outSlope: -0.0225801
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.3644994
+    - serializedVersion: 3
+      time: 0.80975956
+      value: 0.9938672
+      inSlope: 0.05120885
+      outSlope: 0.05120885
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.47904074
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  minLifetime: 5
+  maxLifetime: 10
+  minTimeBetweenSpawns: 4
+  maxTimeBetweenSpawns: 8
+  floatHeight: 0.5

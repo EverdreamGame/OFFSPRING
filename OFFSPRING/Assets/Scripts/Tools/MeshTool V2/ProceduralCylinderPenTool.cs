@@ -9,9 +9,9 @@ public class ProceduralCylinderPenTool : MonoBehaviour
     public BezierPath bezierPath;
 
     [Header("Tube Settings")]
-    public float radius = 0.5f;
-    public int radialSegments = 16;
-    public int pathResolution = 20; // Segments per Bezier segment
+    public float radius = 2f;
+    public int radialSegments = 8;
+    public int pathResolution = 6; // Segments per Bezier segment
 
     private Mesh mesh;
     private Vector3[] vertices;
