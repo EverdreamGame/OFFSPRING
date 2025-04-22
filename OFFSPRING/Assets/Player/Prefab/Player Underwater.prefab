@@ -228,7 +228,7 @@ GameObject:
   - component: {fileID: 3249971218778293378}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -242,7 +242,7 @@ Transform:
   m_GameObject: {fileID: 4228599167818630073}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 8, y: 1, z: 0}
+  m_LocalPosition: {x: 10, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -312,11 +312,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerManager: {fileID: 0}
-  FollowingSharpness: 15
+  FollowingSharpness: 5
   DirectionFromPlayer: {x: 1, y: 0, z: 0}
-  DefaultDistance: 20
+  DefaultDistance: 5
   MinDistance: 0
-  MaxDistance: 20
+  MaxDistance: 50
   RotationSharpness: 5
   TargetRollAngle: 0
   isCameraShaking: 0
@@ -471,6 +471,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6372943329490065884}
   - component: {fileID: 5602381151164316513}
+  - component: {fileID: 8495247271632424927}
   m_Layer: 0
   m_Name: Player Underwater
   m_TagString: Player
@@ -512,6 +513,18 @@ MonoBehaviour:
   CameraController: {fileID: 2320970213435942229}
   playerInteractionScript: {fileID: 6589558420457221834}
   CharacterAnimator: {fileID: 8553595227569234077}
+--- !u!114 &8495247271632424927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4252853185476401757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 451cbfc5770fc0b419ad36c8e12b49fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5603421947109404207
 GameObject:
   m_ObjectHideFlags: 0

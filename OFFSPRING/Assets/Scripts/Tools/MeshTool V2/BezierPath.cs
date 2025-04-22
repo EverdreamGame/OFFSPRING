@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if UNITY_EDITOR
 [ExecuteAlways]
 public class BezierPath : MonoBehaviour
 {
@@ -37,3 +38,4 @@ public class BezierPath : MonoBehaviour
         OnPathChanged?.Invoke();
     }
 }
+#endif
