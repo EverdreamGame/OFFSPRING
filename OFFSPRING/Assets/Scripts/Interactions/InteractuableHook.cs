@@ -15,46 +15,73 @@ public class InteractuableHook : ParentInteractionScript
 
     private bool interactuando = false;
 
+    public float returnSpeed = 2f; // Speed at which object returns to start
+    private Vector3 startPosition;
+
+    private Vector3 normalizedMovingAxis;
+    private Tween moveTween;
+    private float lastDistance = -1f;
+
     private void Start()
     {
         player = Player.Instance.KinematicCharacterController;
+        startPosition = transform.position;
+        normalizedMovingAxis = movingAxis.normalized;
     }
 
     public override void StartInteraction(Transform playerTrans)
     {
         interactuando = true;
+        transform.DOKill();
     }
 
     public override void EndInteraction()
     {
         interactuando = false;
+        
+        float distance = Vector3.Distance(transform.position, startPosition);
+        float duration = distance / returnSpeed;
+
+        transform.DOMove(startPosition, duration);
     }
 
-    float distanceBetweenStartToCurrent;
+    //float distanceBetweenStartToCurrent;
     public float offsetFromPlayer = 0.5f; // Set this from Inspector
 
     public void FixedUpdate()
     {
-        if (!interactuando) return;
+        float newDistance;
 
-        // Get vector from parent to player
-        Vector3 offset = player.transform.position - parent.position;
-
-        // Project offset onto movingAxis to constrain movement
-        Vector3 constrainedOffset = Vector3.Dot(offset, movingAxis) * movingAxis;
-
-        // Clamp the distance to be within min and max bounds
-        float clampedDistance = Mathf.Clamp(constrainedOffset.magnitude, minDistance, maxDistanceAvailable);
-        Vector3 clampedOffset = movingAxis.normalized * clampedDistance;
-
-        // Final position with offset from player
-        transform.DOMove(parent.position + clampedOffset + (clampedOffset.normalized * offsetFromPlayer), .1f);
-
-        distanceBetweenStartToCurrent = clampedOffset.magnitude;
-
-        foreach (var item in cylinder)
+        if (interactuando)
         {
-            item.UpdateMeshIfNeeded(distanceBetweenStartToCurrent, maxDistanceAvailable);
+            Vector3 offset = player.transform.position - parent.position;
+            float projection = Vector3.Dot(offset, normalizedMovingAxis);
+            float clampedDistance = Mathf.Clamp(projection, minDistance, maxDistanceAvailable);
+            Vector3 targetPosition = parent.position + normalizedMovingAxis * clampedDistance + normalizedMovingAxis * offsetFromPlayer;
+
+            // Only move if not already moving there
+            if (moveTween == null || !moveTween.IsActive() || moveTween.IsComplete())
+            {
+                moveTween = transform.DOMove(targetPosition, 0.1f).SetEase(Ease.Linear);
+            }
+
+            newDistance = clampedDistance;
+        }
+        else
+        {
+            // Use actual object position for mesh calculation
+            Vector3 offsetFromParent = transform.position - parent.position;
+            newDistance = Vector3.Dot(offsetFromParent, normalizedMovingAxis);
+        }
+
+        // Only update mesh if distance changed significantly
+        if (Mathf.Abs(newDistance - lastDistance) > 0.01f)
+        {
+            foreach (var item in cylinder)
+            {
+                item.UpdateMeshIfNeeded(newDistance, maxDistanceAvailable);
+            }
+            lastDistance = newDistance;
         }
     }
 

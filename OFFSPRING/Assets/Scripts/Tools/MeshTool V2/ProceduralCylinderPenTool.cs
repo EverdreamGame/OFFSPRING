@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+#if UNITY_EDITOR
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(BezierPath))]
 [ExecuteAlways]
 public class ProceduralCylinderPenTool : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class ProceduralCylinderPenTool : MonoBehaviour
 
     private void Start()
     {
+        bezierPath = GetComponent<BezierPath>();
         GenerateTubeAlongBezier();
     }
 
@@ -159,3 +161,4 @@ public class ProceduralCylinderPenTool : MonoBehaviour
         mesh.RecalculateBounds();
     }
 }
+#endif
