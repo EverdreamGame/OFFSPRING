@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Concreto
-  m_Shader: {fileID: -6465566751694194690, guid: 6a331ff52656649498e0e808c3ed6ee4, type: 3}
+  m_Name: Carne 1
+  m_Shader: {fileID: -6465566751694194690, guid: bc2855a7d538b0242b1df91000d12001, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -63,10 +63,10 @@ Material:
     - _ExcludeFromTUAndAA: 0
     - _MaterialID: 1
     - _MaterialTypeMask: 2
-    - _MeatFivers: 9.7
+    - _MeatFivers: 11.7
     - _MeatMove: 0
-    - _MeatTextureNoise: 5
-    - _MoveSpeed: 2.8
+    - _MeatTextureNoise: 0.14
+    - _MoveSpeed: 0
     - _OpaqueCullMode: 2
     - _PerPixelSorting: 0
     - _RayTracing: 0
@@ -75,7 +75,6 @@ Material:
     - _RefractionModel: 0
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
-    - _RotationAngle: 0
     - _SrcBlend: 1
     - _StencilRef: 0
     - _StencilRefDepth: 8
@@ -105,10 +104,10 @@ Material:
     m_Colors:
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _MeatColor_1: {r: 1, g: 0.88180673, b: 0.7150943, a: 0}
-    - _MeatColor_2: {r: 0.90943396, g: 0.35637718, b: 0.24537553, a: 1}
-    - _MeatTextureTiling: {r: 0, g: 0.69, b: 0, a: 0}
-    - _Smoothness: {r: 0, g: 0, b: 0, a: 0}
+    - _MeatColor_1: {r: 1, g: 0.5722041, b: 0, a: 0}
+    - _MeatColor_2: {r: 0, g: 0, b: 0, a: 1}
+    - _MeatTextureTiling: {r: 0, g: 0, b: 0, a: 0}
+    - _Smoothness: {r: 0, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &596229732767219786
