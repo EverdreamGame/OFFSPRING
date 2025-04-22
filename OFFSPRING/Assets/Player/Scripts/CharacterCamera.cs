@@ -45,6 +45,8 @@ public class CharacterCamera : MonoBehaviour
 
     [HideInInspector] public Vector3 PlanarDirection { get; set; }
 
+    private Camera camera;
+    
     void OnValidate()
     {
         DefaultDistance = Mathf.Clamp(DefaultDistance, MinDistance, MaxDistance);
@@ -55,6 +57,8 @@ public class CharacterCamera : MonoBehaviour
     void Awake()
     {
         PlanarDirection = Vector3.forward;
+
+        camera = GetComponent<Camera>();
     }
 
     void Update()
@@ -122,4 +126,11 @@ public class CharacterCamera : MonoBehaviour
 
         isCameraShaking = false;
     }
+
+    // Camera triggers
+    public void SetFov(float newFov) => camera.fieldOfView = newFov;
+    public void SetTargetRollAngle(float newAngle) => TargetRollAngle = newAngle;
+    public void SetDistance(float newDistance) => DefaultDistance = newDistance;
+    public void SetLookatTransform(Transform newLookatTransform) => LookAtTransform = newLookatTransform;
+    public void SetFollowTransform(Transform newFollowTransform) => FollowTransfrom = newFollowTransform;
 }
