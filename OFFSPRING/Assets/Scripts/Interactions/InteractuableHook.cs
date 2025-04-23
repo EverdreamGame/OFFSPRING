@@ -25,7 +25,7 @@ public class InteractuableHook : ParentInteractionScript
     private void Start()
     {
         player = Player.Instance.KinematicCharacterController;
-        startPosition = transform.position;
+        startPosition = new Vector3(0f, 0f, 1f);
         normalizedMovingAxis = movingAxis.normalized;
     }
 
@@ -42,7 +42,7 @@ public class InteractuableHook : ParentInteractionScript
         float distance = Vector3.Distance(transform.position, startPosition);
         float duration = distance / returnSpeed;
 
-        transform.DOMove(startPosition, duration);
+        transform.DOLocalMove(startPosition, duration);
     }
 
     //float distanceBetweenStartToCurrent;

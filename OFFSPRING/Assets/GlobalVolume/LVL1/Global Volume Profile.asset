@@ -112,7 +112,7 @@ MonoBehaviour:
     m_Value: {r: 0.6320754, g: 0.15220208, b: 0.10435206, a: 1}
   globalLightProbeDimmer:
     m_OverrideState: 0
-    m_Value: 1
+    m_Value: 0
   depthExtent:
     m_OverrideState: 1
     m_Value: 20
