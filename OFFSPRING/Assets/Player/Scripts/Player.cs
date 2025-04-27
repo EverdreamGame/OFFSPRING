@@ -18,6 +18,14 @@ public enum PlayerInputDevice
     Gamepad
 }
 
+// TODO MARC: Implementar player states
+public enum PlayerState
+{
+    Playing = 0,
+    Dead,
+    Paused
+}
+
 public class Player : MonoBehaviour
 {
     // Public
