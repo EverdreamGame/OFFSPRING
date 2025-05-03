@@ -6,10 +6,14 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Collider))]
 public class TriggerMemoryVaultByCollision : MonoBehaviour
 {
+    // SO del coleccionable en concreto
+    [SerializeField] private SO_Collectable data;
+
+    // Sistema de partículas de cuando pillas el coleccionable
     [HideInInspector][SerializeField] public GameObject collectedEffectPrefab;
 
+    // Animacion
     private float shrinkAnimationDuration = 1f;
-
     private static readonly AnimationCurve shrinkCurve = new AnimationCurve(
         new Keyframe(0f, 1f, 0f, 4f),
         new Keyframe(0.3f, 1.2f),
@@ -26,6 +30,18 @@ public class TriggerMemoryVaultByCollision : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             StartCoroutine(ShrinkCoroutine(transform.localScale));
+
+            if (data == null)
+            {
+                Debug.LogError("Scriptable object del coleccionable no asignado en el inspector");
+            }
+            else
+            {
+                MemoriesCollectedManager.collectables.Add(data);
+                Debug.Log(data.name + " has been collected!");
+            }
+
+            GetComponent<Collider>().enabled = false;
 
             onTriggerEnter.Invoke();
         }
