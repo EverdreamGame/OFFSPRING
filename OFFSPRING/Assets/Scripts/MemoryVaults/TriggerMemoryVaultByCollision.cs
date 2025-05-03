@@ -26,6 +26,7 @@ public class TriggerMemoryVaultByCollision : MonoBehaviour
     private RawImage modelPreviewRawImage;
     private static Vector3 previewPosition = new Vector3(1000, 0, 0);
     private static Vector3 cameraOffset = new Vector3(0, 0, 2);
+    private static Vector3 rotationOffset = new Vector3(0, -90, 0);
     private static float rotationSpeed = 30f;
     private static float displayDuration = 5f;
     private GameObject rotatingAnchor;
@@ -101,7 +102,7 @@ public class TriggerMemoryVaultByCollision : MonoBehaviour
         }
 
         // Instanciar modelo
-        GameObject model = Instantiate(data.mesh_3D, previewPosition, Quaternion.identity);
+        GameObject model = Instantiate(data.mesh_3D, previewPosition, Quaternion.Euler(rotationOffset));
 
         // Crear anchor rotatorio
         rotatingAnchor = new GameObject("ModelRotator");
