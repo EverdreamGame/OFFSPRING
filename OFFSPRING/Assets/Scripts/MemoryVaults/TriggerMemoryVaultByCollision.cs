@@ -5,16 +5,22 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Collider))]
 public class TriggerMemoryVaultByCollision : MonoBehaviour
 {
-    [Tooltip("Eventos adicionales que se ejecutan al entrar en el trigger")]
-    public UnityEvent onTriggerEnter;
+    [Header("*Arrastrar prefab de CollectableParticleSystem como hijo*")]
+    [Space]
 
-    public GameObject memoryVaultPrefab;
+    [Tooltip("Eventos adicionales que se ejecutan al recoger el objeto")]
+    public UnityEvent onTriggerEnter;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            Instantiate(memoryVaultPrefab);
+            //GetComponentInChildren<ParticleSystem>().Stop();
+            GetComponentInChildren<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            GetComponentInChildren<ParticleSystem>().loop = false;
+            transform.GetChild(0).GetComponentInChildren<ParticleSystem>().Play();
+
+            Destroy(gameObject, 1f);
 
             onTriggerEnter.Invoke();
         }
