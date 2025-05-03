@@ -2,6 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Collider))]
 public class TriggerMemoryVaultByCollision : MonoBehaviour
@@ -20,7 +21,18 @@ public class TriggerMemoryVaultByCollision : MonoBehaviour
         new Keyframe(1f, 0f, -4f, 0f)
     );
 
+    // Pop Up
+    [HideInInspector] public GameObject canvasPrefab;
+    private RawImage modelPreviewRawImage;
+    private static Vector3 previewPosition = new Vector3(1000, 0, 0);
+    private static Vector3 cameraOffset = new Vector3(0, 0, 2);
+    private static float rotationSpeed = 30f;
+    private static float displayDuration = 5f;
+    private GameObject rotatingAnchor;
+    private Camera previewCamera;
+    private RenderTexture previewTexture;
 
+    [Space]
 
     [Tooltip("Eventos adicionales que se ejecutan al recoger el objeto")]
     public UnityEvent onTriggerEnter;
@@ -68,11 +80,9 @@ public class TriggerMemoryVaultByCollision : MonoBehaviour
 
         ParticleBurstAnimation();
 
-        Destroy(gameObject);
+        StartCoroutine(ShowCollectableCoroutine());
     }
 
-
-    // *** Funcionará solo si la jerarquia del prefab del sistema de partículas es correcto!!
     private void ParticleBurstAnimation()
     {
         ParticleSystem auraPS = GetComponentInChildren<ParticleSystem>();
@@ -80,5 +90,96 @@ public class TriggerMemoryVaultByCollision : MonoBehaviour
         auraPS.Stop();
 
         Instantiate(collectedEffectPrefab, auraPS.transform.position, auraPS.transform.rotation);
+    }
+
+    private IEnumerator ShowCollectableCoroutine()
+    {
+        if (data.mesh_3D == null)
+        {
+            Debug.LogError("Mesh no asignada en el scriptable object del coleccionable");
+            yield break;
+        }
+
+        // Instanciar modelo
+        GameObject model = Instantiate(data.mesh_3D, previewPosition, Quaternion.identity);
+
+        // Crear anchor rotatorio
+        rotatingAnchor = new GameObject("ModelRotator");
+        rotatingAnchor.transform.position = previewPosition;
+        model.transform.SetParent(rotatingAnchor.transform);
+
+        // Asignar capa "Preview"
+        SetLayerRecursively(rotatingAnchor, LayerMask.NameToLayer("Preview"));
+
+        // Crear cámara
+        GameObject camObj = new GameObject("PreviewCamera");
+        previewCamera = camObj.AddComponent<Camera>();
+        camObj.transform.position = previewPosition + cameraOffset;
+        camObj.transform.LookAt(previewPosition);
+        previewCamera.clearFlags = CameraClearFlags.SolidColor;
+        previewCamera.backgroundColor = Color.clear;
+        previewCamera.cullingMask = LayerMask.GetMask("Preview");
+
+        // Instanciar canvas
+        GameObject canvas = Instantiate(canvasPrefab);
+
+        // Crear RenderTexture
+        previewTexture = new RenderTexture(512, 512, 16);
+        previewCamera.targetTexture = previewTexture;
+
+        // Asignar textura a una RawImage
+        modelPreviewRawImage = FindRawImageRecursively(canvas);
+        if (modelPreviewRawImage == null)
+        {
+            Debug.LogError("Raw image no encontrada en el prefab del canvas");
+        }
+        else
+        {
+            modelPreviewRawImage.texture = previewTexture;
+        }
+
+
+        // Mostrar durante X segundos
+        float elapsed = 0f;
+        while (elapsed < displayDuration)
+        {
+            rotatingAnchor.transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Limpiar
+        Destroy(canvas);
+        Destroy(rotatingAnchor);
+        Destroy(previewCamera.gameObject);
+        modelPreviewRawImage.texture = null;
+    }
+
+    private void SetLayerRecursively(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+        foreach (Transform child in obj.transform)
+        {
+            SetLayerRecursively(child.gameObject, layer);
+        }
+    }
+
+    private RawImage FindRawImageRecursively(GameObject obj)
+    {
+        // Comprobar si el propio objeto tiene RawImage
+        RawImage rawImage = obj.GetComponent<RawImage>();
+        if (rawImage != null)
+            return rawImage;
+
+        // Recorrer hijos
+        foreach (Transform child in obj.transform)
+        {
+            RawImage found = FindRawImageRecursively(child.gameObject);
+            if (found != null)
+                return found;
+        }
+
+        // No se encontró
+        return null;
     }
 }

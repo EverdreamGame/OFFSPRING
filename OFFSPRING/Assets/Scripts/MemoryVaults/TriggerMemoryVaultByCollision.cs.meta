@@ -4,7 +4,9 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
+  - data: {instanceID: 0}
   - collectedEffectPrefab: {fileID: 7732850917700424831, guid: f0d324c7bec7a56419be204e0f43234e, type: 3}
+  - canvasPrefab: {fileID: 5049417988697380913, guid: 2009fd5b57fa5044188cb24727a8286b, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
