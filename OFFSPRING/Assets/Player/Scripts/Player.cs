@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
-
+using UnityEngine.Events;
 public struct PlayerCharacterInputs
 {
     public Vector2 walkInput;
@@ -41,6 +41,10 @@ public class Player : MonoBehaviour
     [Space]
     [Header("Components")]
     public Animator CharacterAnimator;
+
+    [Space]
+    [Header("Events")]
+    public UnityEvent OnPause;
 
     // Private
     private PlayerCharacterInputs _characterInputs;

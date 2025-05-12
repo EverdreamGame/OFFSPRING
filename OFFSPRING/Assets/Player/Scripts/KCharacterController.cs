@@ -1,6 +1,7 @@
 using UnityEngine;
 using KinematicCharacterController;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public enum CharacterState
 {
@@ -30,8 +31,6 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     [HideInInspector] public Player PlayerManager; 
 
     public CharacterState CurrentCharacterState;
-
-    // TODO MARC: Poner eventos para acciones (OnPlayerStun...)
 
     [Space]
     [Header("Stable Movement")]
@@ -71,6 +70,11 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     public BonusOrientationMethod BonusOrientationMethod = BonusOrientationMethod.None;
     public float BonusOrientationSharpness = 10f;
     public Vector3 Gravity = new Vector3(0, -30f, 0);
+
+    // TODO MARC: Poner eventos para acciones (OnPlayerStun...)
+    [Space]
+    [Header("Events")]
+    public UnityEvent OnPlayerStun, OnUnderwaterImpulse;
 
     // Private fields -------------------------------------------------
     Vector3 _moveInputVector = Vector3.zero;
@@ -437,6 +441,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                             _lastImpulseTime = Time.time;
 
                             Animator.SetBool("isMoving", true);
+
+                            OnUnderwaterImpulse?.Invoke();
                         }
                         else
                         {
@@ -642,6 +648,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
         _isStunned = true;
         _lastStunTime = Time.time;
 
-        PlayerManager.CameraController.TriggerCameraShake(magnitude: 0.1f, controllerVibration: false);
+        OnPlayerStun?.Invoke();
+
+        PlayerManager.CameraController.TriggerCameraShake(duration: 0.5f, magnitude: 0.1f, controllerVibration: false);
     }
 }
