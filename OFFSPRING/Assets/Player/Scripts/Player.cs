@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using UnityEngine.Events;
+
 public struct PlayerCharacterInputs
 {
     public Vector2 walkInput;
@@ -39,16 +40,21 @@ public class Player : MonoBehaviour
     public PlayerInteractionScript playerInteractionScript;
 
     [Space]
+    [Header("Pause")]
+    public RectTransform PauseMenu;
+
+    [Space]
     [Header("Components")]
     public Animator CharacterAnimator;
 
     [Space]
     [Header("Events")]
-    public UnityEvent OnPause;
+    public UnityEvent OnPaused;
 
     // Private
     private PlayerCharacterInputs _characterInputs;
     private IA_Default inputActions;
+    private bool _isPaused = false;
 
     public static Player Instance { get; private set; }
 
@@ -137,6 +143,29 @@ public class Player : MonoBehaviour
         CurrentInputDevice = GetCurrentInputDevice(context);
     }
 
+    void OnPause(InputAction.CallbackContext context)
+    {
+        _isPaused = !_isPaused;
+        if (PauseMenu != null) PauseMenu.gameObject.SetActive(_isPaused);
+
+        if (_isPaused)
+        {
+            KinematicCharacterController.TransitionToState(CharacterState.Paused);
+            OnPaused.Invoke();
+
+            Cursor.visible = true;
+        }
+        else
+        {
+            // TODO MARC: De momento esto esta bien pero deberias hacer un check para saber si deberia volver a nadar o al default
+            KinematicCharacterController.TransitionToState(CharacterState.Swimming);
+
+            Cursor.visible = false;
+        }
+
+        CurrentInputDevice = GetCurrentInputDevice(context);
+    }
+
     PlayerInputDevice GetCurrentInputDevice(InputAction.CallbackContext context)
     {
         if (context.control.device is UnityEngine.InputSystem.Gamepad)
@@ -163,6 +192,7 @@ public class Player : MonoBehaviour
         inputActions.Gameplay.Sprint.performed += OnSprint;
         inputActions.Gameplay.Sprint.canceled += OnSprint;
         inputActions.Gameplay.Jump.performed += OnJump;
+        inputActions.Gameplay.Pause.performed += OnPause;
 
         //Interaction
         inputActions.Gameplay.Interact.performed += OnInteract;
@@ -179,6 +209,7 @@ public class Player : MonoBehaviour
         inputActions.Gameplay.Sprint.performed -= OnSprint;
         inputActions.Gameplay.Sprint.canceled -= OnSprint;
         inputActions.Gameplay.Jump.performed -= OnJump;
+        inputActions.Gameplay.Pause.performed -= OnPause;
 
         //Interaction
         inputActions.Gameplay.Interact.performed -= OnInteract;

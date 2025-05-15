@@ -6,7 +6,8 @@ using UnityEngine.Events;
 public enum CharacterState
 {
     Default,
-    Swimming
+    Swimming,
+    Paused
 }
 
 public enum OrientationMethod
@@ -131,6 +132,13 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     Motor.SetCapsuleDimensions(1.14f, 2.25f, 0f);
                     break;
                 }
+            case CharacterState.Paused:
+                {
+                    Motor.enabled = false;
+                    Animator.enabled = false;
+
+                    break;
+                }
         }
     }
     public void OnStateExit(CharacterState state, CharacterState toState)
@@ -151,12 +159,22 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     Motor.SetCapsuleDimensions(0.5f, 2.25f, 0f);
                     break;
                 }
+            case CharacterState.Paused:
+                {
+                    Motor.enabled = true;
+                    Animator.enabled = true;
+
+                    break;
+                }
         }
     }
 
     // ========================================== INPUTS ==========================================
     public void SetInputs(ref PlayerCharacterInputs inputs)
     {
+        // If Paused Return
+        if (CurrentCharacterState == CharacterState.Paused) return;
+
         // Calculate camera direction and rotation on the character plane
         Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(inputs.cameraRotation * Vector3.forward, Motor.CharacterUp).normalized;
         if (cameraPlanarDirection.sqrMagnitude == 0f)
@@ -198,28 +216,49 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     _lookInputVector = _moveInputVector;
                     break;
                 }
+            case CharacterState.Paused:
+                {
+                    break;
+                }
         }
 
         // Other inputs
-        if (inputs.jumpInput && _canJump)
+        switch (CurrentCharacterState)
         {
-            _jumpRequest = true;
-        }
+            case CharacterState.Default:
+            case CharacterState.Swimming:
+                {
+                    if (inputs.jumpInput && _canJump)
+                    {
+                        _jumpRequest = true;
+                    }
 
-        if (_canSprint)
-        {
-            _isSprinting = inputs.sprintInput;
+                    if (_canSprint)
+                    {
+                        _isSprinting = inputs.sprintInput;
+                    }
+
+                    break;
+                }
+            case CharacterState.Paused:
+                {
+                    break;
+                }
         }
     }
 
     // ========================================== UPDATE ==========================================
     public void BeforeCharacterUpdate(float deltaTime)
     {
-
+        // If Paused Return
+        if (CurrentCharacterState == CharacterState.Paused) return;
     }
 
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
     {
+        // If Paused Return
+        if (CurrentCharacterState == CharacterState.Paused) return;
+
         if (_setRotationRequest)
         {
             currentRotation = _targetRotation;
@@ -333,12 +372,18 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     }
                     break;
                 }
-
+            case CharacterState.Paused:
+                {
+                    break;
+                }
         }
 
     }
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
     {
+        // If Paused Return
+        if (CurrentCharacterState == CharacterState.Paused) return;
+
         if (_setVelocityRequest)
         {
             currentVelocity = _targetVelocity;
@@ -500,6 +545,10 @@ public class KCharacterController : MonoBehaviour, ICharacterController
 
                 break;
                 }
+            case CharacterState.Paused:
+                {
+                    break;
+                }
         }
 
         // Manage movement constraints when interacting with an object
@@ -524,12 +573,20 @@ public class KCharacterController : MonoBehaviour, ICharacterController
     }
     public void AfterCharacterUpdate(float deltaTime)
     {
+        // If Paused Return
+        if (CurrentCharacterState == CharacterState.Paused) return;
+
         Debug.DrawLine(transform.position, transform.position + _movementDirection * 3f, Color.green);
 
         switch (CurrentCharacterState)
         {
             case CharacterState.Default:
                 {
+                    // Handle stun
+                    if (_isStunned && Time.time > _lastStunTime + DefaultStunTime)
+                    {
+                        _isStunned = false;
+                    }
                     break;
                 }
             case CharacterState.Swimming:
@@ -538,14 +595,18 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     {
                         _canJump = true;
                     }
+
+                    // Handle stun
+                    if (_isStunned && Time.time > _lastStunTime + DefaultStunTime)
+                    {
+                        _isStunned = false;
+                    }
                     break;
                 }
-        }
-
-        // Handle stun
-        if (_isStunned && Time.time > _lastStunTime + DefaultStunTime)
-        {
-            _isStunned = false;
+            case CharacterState.Paused:
+                {
+                    break;
+                }
         }
     }
 
