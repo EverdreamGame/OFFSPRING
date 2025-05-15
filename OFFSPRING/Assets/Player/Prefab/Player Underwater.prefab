@@ -161,8 +161,8 @@ MonoBehaviour:
   AirAccelerationSpeed: 15
   AirDrag: 0.1
   MaxUnderwaterSpeed: 3
-  MaxUnderwaterSprintSpeed: 10
-  UnderwaterImpulseSpeed: 22
+  MaxUnderwaterSprintSpeed: 6
+  UnderwaterImpulseSpeed: 10
   UnderwaterAccelerationSpeed: 10
   UnderwaterDrag: 1
   UnderwaterOrientationSharpness: 5
@@ -172,6 +172,12 @@ MonoBehaviour:
   BonusOrientationMethod: 0
   BonusOrientationSharpness: 10
   Gravity: {x: 0, y: 0, z: 0}
+  OnPlayerStun:
+    m_PersistentCalls:
+      m_Calls: []
+  OnUnderwaterImpulse:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &6966948414467945611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -512,7 +518,11 @@ MonoBehaviour:
   KinematicCharacterController: {fileID: 8129900605315666607}
   CameraController: {fileID: 2320970213435942229}
   playerInteractionScript: {fileID: 6589558420457221834}
+  PauseMenu: {fileID: 0}
   CharacterAnimator: {fileID: 8553595227569234077}
+  OnPaused:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &8495247271632424927
 MonoBehaviour:
   m_ObjectHideFlags: 0

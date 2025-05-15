@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using System.Collections;
+using UnityEngine.UI;
 
 public struct PlayerCharacterInputs
 {
@@ -23,8 +25,7 @@ public enum PlayerInputDevice
 public enum PlayerState
 {
     Playing = 0,
-    Dead,
-    Paused
+    Dead
 }
 
 public class Player : MonoBehaviour
@@ -54,18 +55,24 @@ public class Player : MonoBehaviour
     // Private
     private PlayerCharacterInputs _characterInputs;
     private IA_Default inputActions;
+    private EventSystem eventSystem;
     private bool _isPaused = false;
 
     public static Player Instance { get; private set; }
 
     void Awake()
     {
+        // Singleton
         if (Instance != null)
             Destroy(gameObject);
         else
             Instance = this;
 
+        // References
         inputActions = new IA_Default();
+        eventSystem = EventSystem.current;
+
+        // Character & Camera
         KinematicCharacterController.PlayerManager = this;
         KinematicCharacterController.Animator = CharacterAnimator;
         CameraController.PlayerManager = this;
@@ -145,23 +152,7 @@ public class Player : MonoBehaviour
 
     void OnPause(InputAction.CallbackContext context)
     {
-        _isPaused = !_isPaused;
-        if (PauseMenu != null) PauseMenu.gameObject.SetActive(_isPaused);
-
-        if (_isPaused)
-        {
-            KinematicCharacterController.TransitionToState(CharacterState.Paused);
-            OnPaused.Invoke();
-
-            Cursor.visible = true;
-        }
-        else
-        {
-            // TODO MARC: De momento esto esta bien pero deberias hacer un check para saber si deberia volver a nadar o al default
-            KinematicCharacterController.TransitionToState(CharacterState.Swimming);
-
-            Cursor.visible = false;
-        }
+        Pause();
 
         CurrentInputDevice = GetCurrentInputDevice(context);
     }
@@ -179,6 +170,38 @@ public class Player : MonoBehaviour
 
         // Retorno por defecto si no se detecta ninguno de los anteriores
         return PlayerInputDevice.Keyboard;
+    }
+
+    public void Pause()
+    {
+        _isPaused = !_isPaused;
+        if (PauseMenu != null) PauseMenu.gameObject.SetActive(_isPaused);
+
+        if (_isPaused)
+        {
+            KinematicCharacterController.TransitionToState(CharacterState.Paused);
+            OnPaused.Invoke();
+
+            if (eventSystem != null) eventSystem.SetSelectedGameObject(PauseMenu.GetComponentInChildren<Button>().gameObject);
+
+            if (CurrentInputDevice != PlayerInputDevice.Gamepad)
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.Confined;
+            }
+
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            // TODO MARC: De momento esto esta bien pero deberias hacer un check para saber si deberia volver a nadar o al default
+            KinematicCharacterController.TransitionToState(CharacterState.Swimming);
+
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+
+            Time.timeScale = 1f;
+        }
     }
 
     void OnEnable()
