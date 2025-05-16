@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2249512c88d79154da2f432768cb2b34, type: 3}
   m_Name: SO_Fetus
   m_EditorClassIdentifier: 
-  itemName: Fetus
+  memoryNumber: 0
+  memoryName: Fetus
   description: La mano arriba, cintura sola, da media vuelta, danza kuduro
   mesh_3D: {fileID: 5950589754783809079, guid: f2b2a0e4d6fd7ed4a91e63cde2e46919, type: 3}
   render_2D: {fileID: 0}
