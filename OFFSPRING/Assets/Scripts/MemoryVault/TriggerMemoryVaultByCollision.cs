@@ -105,7 +105,7 @@ public class TriggerMemoryVaultByCollision : MonoBehaviour
         GameObject model = Instantiate(data.mesh_3D, previewPosition, Quaternion.Euler(rotationOffset));
 
         // Crear anchor rotatorio
-        rotatingAnchor = new GameObject("ModelRotator");
+        rotatingAnchor = new GameObject("ModelPreviewRotator");
         rotatingAnchor.transform.position = previewPosition;
         model.transform.SetParent(rotatingAnchor.transform);
 
