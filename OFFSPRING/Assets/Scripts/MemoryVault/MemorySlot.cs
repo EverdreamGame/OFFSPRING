@@ -25,7 +25,8 @@ public class MemorySlot : MonoBehaviour, IPointerEnterHandler
     {
         if (memory == null) return;
 
-        gameObject.GetComponentInChildren<Image>().sprite = memory.render_2D;
+        //gameObject.GetComponentInChildren<Image>(true).sprite = memory.render_2D; // No funcionaba pillaba el mismo gameobject >:(
+        gameObject.transform.GetChild(0).GetComponent<Image>().sprite = memory.render_2D;
     }
 
     public void OnPointerEnter(PointerEventData eventData)

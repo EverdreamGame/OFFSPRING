@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a062c64486c710e4f9f2685dd27d8b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memory: {fileID: 0}
+  memory: {fileID: 11400000, guid: 4f300cafbff17024387a900b3448f1ec, type: 2}
 --- !u!1 &433930479513382405
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,7 +254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a062c64486c710e4f9f2685dd27d8b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memory: {fileID: 0}
+  memory: {fileID: 11400000, guid: 4f300cafbff17024387a900b3448f1ec, type: 2}
 --- !u!1 &480043766751765382
 GameObject:
   m_ObjectHideFlags: 0
@@ -1363,7 +1363,7 @@ GameObject:
   - component: {fileID: 3664825519675248568}
   - component: {fileID: 5985542435168768006}
   m_Layer: 5
-  m_Name: memoryDescription
+  m_Name: MemoryDescription
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1577,7 +1577,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a062c64486c710e4f9f2685dd27d8b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memory: {fileID: 0}
+  memory: {fileID: 11400000, guid: 4f300cafbff17024387a900b3448f1ec, type: 2}
 --- !u!1 &3971709413501828126
 GameObject:
   m_ObjectHideFlags: 0
@@ -1742,7 +1742,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a062c64486c710e4f9f2685dd27d8b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memory: {fileID: 0}
+  memory: {fileID: 11400000, guid: 4f300cafbff17024387a900b3448f1ec, type: 2}
 --- !u!1 &4479895867205616667
 GameObject:
   m_ObjectHideFlags: 0
@@ -1888,7 +1888,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a062c64486c710e4f9f2685dd27d8b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memory: {fileID: 0}
+  memory: {fileID: 11400000, guid: 4f300cafbff17024387a900b3448f1ec, type: 2}
 --- !u!1 &5715481244546927006
 GameObject:
   m_ObjectHideFlags: 0
@@ -2321,7 +2321,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a062c64486c710e4f9f2685dd27d8b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memory: {fileID: 0}
+  memory: {fileID: 11400000, guid: 4f300cafbff17024387a900b3448f1ec, type: 2}
 --- !u!1 &6154223640338352813
 GameObject:
   m_ObjectHideFlags: 0
@@ -2783,7 +2783,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a062c64486c710e4f9f2685dd27d8b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memory: {fileID: 0}
+  memory: {fileID: 11400000, guid: 4f300cafbff17024387a900b3448f1ec, type: 2}
 --- !u!1 &7554125907868564935
 GameObject:
   m_ObjectHideFlags: 0
@@ -2871,7 +2871,7 @@ GameObject:
   - component: {fileID: 6247838148556328320}
   - component: {fileID: 7796487408642912865}
   m_Layer: 5
-  m_Name: memoryName
+  m_Name: MemoryName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3084,4 +3084,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a062c64486c710e4f9f2685dd27d8b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memory: {fileID: 0}
+  memory: {fileID: 11400000, guid: 4f300cafbff17024387a900b3448f1ec, type: 2}
