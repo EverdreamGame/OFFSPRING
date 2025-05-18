@@ -521,6 +521,7 @@ MonoBehaviour:
   CameraController: {fileID: 2320970213435942229}
   playerInteractionScript: {fileID: 6589558420457221834}
   PauseMenu: {fileID: 3350761239707012027}
+  MemoryVaultMenu: {fileID: 9120266320525258585}
   CharacterAnimator: {fileID: 8553595227569234077}
   OnPaused:
     m_PersistentCalls:

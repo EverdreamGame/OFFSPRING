@@ -43,6 +43,7 @@ public class Player : MonoBehaviour
     [Space]
     [Header("Pause")]
     public RectTransform PauseMenu;
+    public RectTransform MemoryVaultMenu;
 
     [Space]
     [Header("Components")]
@@ -194,6 +195,8 @@ public class Player : MonoBehaviour
         }
         else
         {
+            MemoryVaultMenu.gameObject.SetActive(false); // Forzar desactivar menú memory vault
+
             // TODO MARC: De momento esto esta bien pero deberias hacer un check para saber si deberia volver a nadar o al default
             KinematicCharacterController.TransitionToState(CharacterState.Swimming);
 
