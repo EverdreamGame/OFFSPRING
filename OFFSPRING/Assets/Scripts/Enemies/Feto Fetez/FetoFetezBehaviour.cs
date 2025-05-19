@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using UnityEngine.Events;
 
 public class FetoFetezBehaviour : MonoBehaviour
 {
@@ -25,6 +26,9 @@ public class FetoFetezBehaviour : MonoBehaviour
 
     [Space]
     public State currentState = State.Wandering;
+
+    [Space]
+    public UnityEvent onEnemyDie;
 
     private void Start()
     {
@@ -64,7 +68,6 @@ public class FetoFetezBehaviour : MonoBehaviour
             case State.AggroDeathChase:
                 AggroChase();
                 break;
-
         }
     }
 
@@ -239,6 +242,9 @@ public class FetoFetezBehaviour : MonoBehaviour
         agent.enabled = false;
         ChangeState(State.Stunned); // stays dead, plays animation
         //animator.SetBool("isDead", true);
+
+        onEnemyDie?.Invoke();
+
         Destroy(gameObject, 3f);
     }
 

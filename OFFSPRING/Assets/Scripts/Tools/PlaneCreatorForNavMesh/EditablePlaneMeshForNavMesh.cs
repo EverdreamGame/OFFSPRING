@@ -41,6 +41,7 @@ public class EditablePlaneMeshForNavMesh : MonoBehaviour
     public void RecalculateMesh()
     {
         mesh = new Mesh();
+        mesh.name = "NavMesh";
         mesh.vertices = vertices.ToArray();
 
         if (vertices.Count >= 3)
