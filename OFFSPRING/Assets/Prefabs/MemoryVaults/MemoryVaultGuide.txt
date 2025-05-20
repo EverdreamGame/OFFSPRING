@@ -1,0 +1,12 @@
+Memory Vault Guide
+
+- crear Scriptable Oject (SO_Collectable)
+- asignar mesh, render, descripcion
+
+- colocar objeto en la escena
+- aplicarle los scripts GlowPulse y TriggerMemoryVaultByCollision
+- referenciar SO a "Data" de TriggerMemoryVaultByCollision
+
+En el prefab MemoryVaultCanvas
+
+- Asignar el SO al script MemorySlot, al slot que corresponda
