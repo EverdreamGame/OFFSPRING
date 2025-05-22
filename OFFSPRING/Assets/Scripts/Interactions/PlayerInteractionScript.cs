@@ -28,13 +28,21 @@ public class PlayerInteractionScript : MonoBehaviour
 
         if (hits > 0)
         {
+            if (primerColliderParaInteractuar != null && interactedCollider[0] != primerColliderParaInteractuar)
+            {
+                primerColliderParaInteractuar.GetComponent<ParentInteractionScript>().DeleteOutline();
+            }
             primerColliderParaInteractuar = interactedCollider[0];
 
+            primerColliderParaInteractuar.GetComponent<ParentInteractionScript>().OutlineInteractable();
             //TODO -> UI/Sonido para indicar que puede interactuar
             canInteract = true;
         }
         else
         {
+            if (primerColliderParaInteractuar != null)
+                primerColliderParaInteractuar.GetComponent<ParentInteractionScript>().DeleteOutline();
+
             primerColliderParaInteractuar = null;
             canInteract = true;
         }
