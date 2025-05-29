@@ -9,7 +9,7 @@ public class FetoFetezBehaviour : MonoBehaviour
 
     public NavMeshAgent agent;
     public Rope rope;
-    //public Animator animator;
+    public Animator animator;
     private Transform player;
     private RopeInteractScript ropePoint;
 
@@ -33,7 +33,6 @@ public class FetoFetezBehaviour : MonoBehaviour
     private void Start()
     {
         agent.speed = wanderSpeed;
-        //animator.SetBool("isWalking", true); // Wandering anim
 
         player = Player.Instance.KinematicCharacterController.transform;
         ropePoint = rope.nodes[0].GetComponent<RopeInteractScript>();
@@ -75,35 +74,25 @@ public class FetoFetezBehaviour : MonoBehaviour
     {
         currentState = newState;
 
-        //animator.SetBool("isWalking", false);
-        //animator.SetBool("isChasing", false);
-        //animator.SetBool("isAttacking", false);
-        //animator.SetBool("isStunned", false);
-        //animator.SetBool("isAggro", false);
-        //animator.SetBool("isDead", false);
-
         switch (newState)
         {
             case State.Wandering:
                 agent.speed = wanderSpeed;
-                //animator.SetBool("isWalking", true);
                 break;
             case State.Chasing:
                 agent.speed = chaseSpeed;
-                //animator.SetBool("isChasing", true);
                 break;
             case State.Attacking:
-                //animator.SetBool("isAttacking", true);
                 break;
             case State.Stunned:
-                //animator.SetBool("isStunned", true);
                 break;
             case State.AggroDeathChase:
                 agent.speed = aggroSpeed;
                 aggroTimer = aggroLifetime; // Start the countdown
-                //animator.SetBool("isAggro", true);
                 break;
         }
+
+        animator.SetFloat("Speed", agent.speed);
     }
 
     void Wander()
@@ -128,7 +117,6 @@ public class FetoFetezBehaviour : MonoBehaviour
             agent.SetDestination(newPos);
         }
     }
-
 
     Vector3 PickBiasedWanderDestination()
     {
@@ -201,7 +189,7 @@ public class FetoFetezBehaviour : MonoBehaviour
         {
             Debug.Log("Enemy attacks!");
 
-            //TODO -> logica del ataque 
+            animator.SetTrigger("Attack");
 
             agent.isStopped = true;
             ChangeState(State.Stunned);
@@ -241,7 +229,7 @@ public class FetoFetezBehaviour : MonoBehaviour
         agent.isStopped = true;
         agent.enabled = false;
         ChangeState(State.Stunned); // stays dead, plays animation
-        //animator.SetBool("isDead", true);
+        animator.SetTrigger("Death");
 
         onEnemyDie?.Invoke();
 
