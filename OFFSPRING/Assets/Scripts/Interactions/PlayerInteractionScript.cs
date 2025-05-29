@@ -12,11 +12,16 @@ public class PlayerInteractionScript : MonoBehaviour
     private Collider[] interactedCollider;
     public Collider primerColliderParaInteractuar;
 
+    [Space]
+    public Material outlineMaterial;
+
     private void Start()
     {
         canInteract = false;
 
         interactedCollider = new Collider[1];
+
+        ParentInteractionScript.outlineMaterial = outlineMaterial;
     }
 
     private void Update()

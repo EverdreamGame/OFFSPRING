@@ -137,6 +137,7 @@ MonoBehaviour:
   interactionRadius: 2
   currentObjectInteraction: {fileID: 0}
   primerColliderParaInteractuar: {fileID: 0}
+  outlineMaterial: {fileID: 2100000, guid: da8d6b4f23d34294bbe120d9329d6119, type: 2}
 --- !u!114 &8129900605315666607
 MonoBehaviour:
   m_ObjectHideFlags: 0

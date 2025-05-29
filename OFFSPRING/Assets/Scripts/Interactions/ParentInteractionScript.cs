@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class ParentInteractionScript : MonoBehaviour
 {
-    public Material outlineMaterial;
+    public static Material outlineMaterial; // No tocar, se maneja desde el player y es static para que se aplique a todos los interactuables
     public Renderer[] renderers;
     private List<GameObject> clones = new List<GameObject>();
 
