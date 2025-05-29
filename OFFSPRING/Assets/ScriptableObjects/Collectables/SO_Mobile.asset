@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   memoryNumber: 2
   memoryName: Mobile
-  description: "You heard it. You just didn\u2019t want to."
+  description: I couldn't take the first call. On the second one, an alarmed voice
+    yells at me. Alma is calling to tell me she is pregnant. The next thing I remember
+    is this place.
   mesh_3D: {fileID: 919132149155446097, guid: 178f9cd95edb63441b41d845c15470be, type: 3}
   render_2D: {fileID: 1650095527, guid: 3dbbb1d10d4e773438b941d4b756bcd7, type: 3}

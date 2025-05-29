@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   memoryNumber: 1
   memoryName: Pacifier
-  description: Even the wildest storms pause for it.
+  description: What a familiar smell. It smells like home. Wait, I don't remember
+    any home. This isn't mine. How could it soothe a baby, if it couldn't do it with
+    me.
   mesh_3D: {fileID: 919132149155446097, guid: f96e3d1fd19afaa4fb9cd7704eec489e, type: 3}
   render_2D: {fileID: 849016225, guid: 3dbbb1d10d4e773438b941d4b756bcd7, type: 3}

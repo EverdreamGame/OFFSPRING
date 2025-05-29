@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   memoryNumber: 3
   memoryName: Condom
-  description: No fue rival para ese hijueputa culote.
+  description: I have always been cautious, always. I don't want to bring anyone
+    into the world to suffer what I have suffered. How could this happe? The odds
+    are one in a thousand, it just doesn't make any sense.
   mesh_3D: {fileID: 919132149155446097, guid: ff7edbf864b89364c82f6e881ae5ef72, type: 3}
   render_2D: {fileID: 21300000, guid: 02425f7fa9d923b4099770fc0cf787cc, type: 3}
