@@ -321,6 +321,8 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                     // Get target rotation
                     if (_canJump) // Si se está impulsando, no gira ni se puede cambiar de dirección
                     {
+                        Debug.Log("ASAAS");
+
                         float cameraRollAngle = PlayerManager.CameraController.TargetRollAngle;
 
                         if (_lookInputVector.sqrMagnitude > 0f)
@@ -345,20 +347,20 @@ public class KCharacterController : MonoBehaviour, ICharacterController
                             TargetRotation = Quaternion.Euler(0, eulerAngles.y, 0);
                         }
                     }
-                    //else
-                    //{
-                    //    Quaternion rawRotation = Quaternion.LookRotation(_movementDirection, Motor.CharacterUp);
-                    //    Vector3 eulerAngles = rawRotation.eulerAngles;
+                    else
+                    {
+                        Quaternion rawRotation = Quaternion.LookRotation(_movementDirection, Motor.CharacterUp);
+                        Vector3 eulerAngles = rawRotation.eulerAngles;
 
-                    //    // Ajustar euler angles para que el personaje no quede boca arriba
-                    //    eulerAngles.z = 0;
-                    //    if (eulerAngles.x > 90 && eulerAngles.x < 270)
-                    //    {
-                    //        eulerAngles.y += 180;
-                    //        eulerAngles.x = 180 - eulerAngles.x;
-                    //    }
-                    //    TargetRotation = Quaternion.Euler(eulerAngles);
-                    //}
+                        // Ajustar euler angles para que el personaje no quede boca arriba
+                        eulerAngles.z = 0;
+                        if (eulerAngles.x > 90 && eulerAngles.x < 270)
+                        {
+                            eulerAngles.y += 180;
+                            eulerAngles.x = 180 - eulerAngles.x;
+                        }
+                        TargetRotation = Quaternion.Euler(eulerAngles);
+                    }
 
                     // Set current rotation
                     if (UnderwaterOrientationSharpness > 0)
