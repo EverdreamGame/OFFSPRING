@@ -57,6 +57,8 @@ public class PlayerInteractionScript : MonoBehaviour
     {
         if (!canInteract) return;
 
+        primerColliderParaInteractuar.GetComponent<ParentInteractionScript>().DeleteOutline();
+
         // Si ya estaba interactuando con algo, desinteractua
         if (currentObjectInteraction)
         {
@@ -69,6 +71,7 @@ public class PlayerInteractionScript : MonoBehaviour
         {
             currentObjectInteraction = primerColliderParaInteractuar.GetComponent<ParentInteractionScript>();
             currentObjectInteraction.StartInteraction(transform);
+            
         }
     }
 
